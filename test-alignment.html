@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            display: flex;
+            width: 500px;
+            height: 300px;
+            border: 2px solid red;
+            gap: 10px;
+        }
+        .item {
+            width: 100px;
+            height: 100px;
+            background: blue;
+        }
+    </style>
+</head>
+<body>
+    <h2>Test Alignment</h2>
+    <div>
+        <button onclick="setAlign('center')">Center</button>
+        <button onclick="setAlign('flex-start')">Start</button>
+        <button onclick="setAlign('flex-end')">End</button>
+        <button onclick="setAlign('space-between')">Space-between</button>
+    </div>
+    <div>
+        <button onclick="setDir('row')">Row</button>
+        <button onclick="setDir('column')">Column</button>
+    </div>
+    
+    <div class="container" id="cont">
+        <div class="item"></div>
+        <div class="item"></div>
+    </div>
+
+    <script>
+        const cont = document.getElementById('cont');
+        let currentDir = 'row';
+        
+        function setAlign(align) {
+            console.log('Setting align:', align, 'direction:', currentDir);
+            if (currentDir === 'row') {
+                cont.style.justifyContent = align;
+                cont.style.alignItems = 'center';
+            } else {
+                cont.style.alignItems = 'center';
+                cont.style.justifyContent = align;
+            }
+        }
+        
+        function setDir(dir) {
+            currentDir = dir;
+            cont.style.flexDirection = dir;
+            console.log('Direction set to:', dir);
+        }
+        
+        // Initial
+        setAlign('center');
+    </script>
+</body>
+</html>

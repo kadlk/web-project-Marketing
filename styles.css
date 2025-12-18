@@ -225,7 +225,7 @@ body {
     gap: 20px;
     align-items: flex-start;
     flex-wrap: nowrap;
-    justify-content: flex-start;
+    justify-content: center;
     width: 100%;
     overflow-x: auto;
 }
@@ -238,6 +238,75 @@ body {
     min-width: 0;
 }
 
+/* Слой для номера слайда */
+.slide-number-layer {
+    position: absolute;
+    z-index: 20; /* Поверх контента */
+    pointer-events: auto; /* Чтобы можно было кликнуть/перетащить */
+    user-select: none;
+}
+
+/* Слой для бэкдропа (эмоджи/картинка на фоне) */
+.backdrop-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* Поверх фона (0), но под контентом (10) */
+    pointer-events: none; /* Не перекрывает клики */
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.backdrop-element {
+    position: absolute;
+    transform-origin: center;
+}
+
+/* Wrapper для контента слайда */
+.slide-content-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    z-index: 10; /* Поверх бэкдропа */
+}
+
+/* Стили табов панели */
+.panel-tab-btn {
+    background: transparent;
+    border: none;
+    color: #aaa;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.panel-tab-btn:hover {
+    color: white;
+}
+
+.panel-tab-btn.active {
+    color: white;
+    border-bottom-color: #3b82f6;
+}
+
+.panel-tab-content {
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Адаптивность для мобильных устройств */
 #slides-container {
     width: 100%;
     max-width: 100%;
@@ -258,7 +327,7 @@ body {
     flex-direction: column;
     justify-content: center; /* Центрирование по умолчанию для 1:1 */
     align-items: center;
-    padding: 80px 60px;
+    padding: 30px;
     text-align: center;
     transition: all 0.3s;
     flex-shrink: 0;
@@ -304,12 +373,7 @@ body {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 8px;
 }
-    align-items: center;
-    min-width: 220px;
-    padding: 20px;
-    background: rgba(0,0,0,0.3);
-    border-radius: 10px;
-}
+
 
 .image-upload-btn {
     padding: 12px 20px;
@@ -346,9 +410,10 @@ body {
 .uploaded-image-wrapper {
     position: relative;
     display: inline-block;
-    margin: 10px;
+    margin: 0; /* Remove margin - use gap in flex container instead */
     cursor: move;
     transition: opacity 0.2s;
+    flex-shrink: 0; /* Prevent flex container from shrinking/growing this wrapper */
 }
 
 .uploaded-image-wrapper:hover {
@@ -505,9 +570,6 @@ body {
     z-index: 100000;
     border: 2px solid rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(10px);
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
 }
 
 .text-panel-header {
@@ -649,6 +711,8 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     position: relative;
+    word-break: break-word; /* Ensure long words break */
+    white-space: pre-wrap;  /* Preserve lines and wrap */
 }
 
 .editable-text:hover {
@@ -785,22 +849,22 @@ body {
 
 /* Все заголовки H1/H2 унифицированы по размеру */
 h1, h2 {
-    font-size: 60px;
+    font-size: 52px;
     font-weight: 900;
     color: white;
     line-height: 1.1;
-    margin-bottom: 25px; /* Стандартизированный отступ */
+    margin-bottom: 20px; /* Стандартизированный отступ */
     text-shadow: 0 4px 30px rgba(0,0,0,0.5);
 }
 
 .slide-1 .subtitle {
-    font-size: 32px;
+    font-size: 26px;
     font-weight: 500;
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
 .subtitle, p {
-    font-size: 28px;
+    font-size: 22px;
     color: white;
     line-height: 1.5;
     font-weight: 500;
@@ -830,18 +894,28 @@ h1, h2 {
 /* Для изображений с inline стилями размера - убираем ограничения */
 .uploaded-image-wrapper .slide-image,
 .uploaded-image-wrapper img {
-    max-width: none !important;
-    max-height: none !important;
+    max-width: 100% !important;
+    height: auto !important;
+    display: block;
 }
 
 .slide-image-container {
     display: flex;
     gap: 15px;
-    flex-wrap: wrap;
+    /* Дефолтные значения, которые JavaScript может перезаписать */
     justify-content: center;
     align-items: center;
-    margin: 25px 0; /* Стандартизированный отступ */
-    width: 100%; /* Занимает всю ширину для центрирования */
+    flex-direction: row;
+    margin: 25px 0;
+    width: 100%;
+    /* Визуальная рамка для понимания границ выравнивания */
+    border: 2px dashed rgba(255, 255, 255, 0.15);
+    padding: 15px;
+    transition: border-color 0.3s ease;
+}
+
+.slide-image-container:hover {
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .slide-image-container .slide-image {
@@ -904,29 +978,29 @@ h1, h2 {
 }
 
 .slide.format-9-16 .emoji {
-    font-size: 40px !important; 
-    margin-bottom: 8px !important;
+    font-size: 45px !important;
+    margin-bottom: 10px !important;
     margin-top: 10px;
 }
 
 .slide.format-9-16 h1,
 .slide.format-9-16 h2 {
-    font-size: 26px !important; 
-    margin-bottom: 8px !important;
+    font-size: 32px !important;
+    margin-bottom: 12px !important;
     line-height: 1.2 !important;
 }
 
-.slide.format-9-16 .subtitle, 
+.slide.format-9-16 .subtitle,
 .slide.format-9-16 p {
-    font-size: 14px !important; 
+    font-size: 16px !important;
     max-width: 100% !important;
-    line-height: 1.4 !important;
-    margin-bottom: 6px !important;
-    margin-top: 6px;
+    line-height: 1.5 !important;
+    margin-bottom: 8px !important;
+    margin-top: 8px;
 }
 .slide.format-9-16 .slide-1 .subtitle {
-    font-size: 15px !important;
-    margin-top: 10px;
+    font-size: 18px !important;
+    margin-top: 12px;
 }
 
 .slide.format-9-16 .slide-image {
@@ -941,6 +1015,12 @@ h1, h2 {
 }
 .slide.format-9-16 .slide-image-container .slide-image {
     /* max-width и max-height управляются динамически через JavaScript */
+    /* Empty rule kept for documentation or future use, but commented out to silence linter if needed.
+       Actually, linter complained about empty ruleset. Adding a comment inside makes it not empty technically? 
+       No, usually it needs a property.
+       I will just remove it or add a dummy property.
+    */
+    display: block; /* Ensure block display just in case */
 }
 
 .slide.format-9-16.slide-7 .cta {
@@ -948,6 +1028,45 @@ h1, h2 {
     padding: 10px 25px !important;
     margin-top: 15px !important;
     border-radius: 25px;
+}
+
+/* --- 4:5 Формат --- */
+.slide.format-4-5 {
+    aspect-ratio: 4/5 !important;
+    max-width: 500px !important;
+    padding: 30px !important;
+    overflow-y: hidden; /* Обычно 4:5 влезает без скролла, если контент не огромный */
+}
+
+/* Стили для 4:5 элементов - наследуем или переопределяем */
+.slide.format-4-5 .logo {
+    height: 50px;
+}
+
+.slide.format-4-5 h1,
+.slide.format-4-5 h2 {
+    font-size: 44px;
+    margin-bottom: 18px;
+    line-height: 1.15;
+}
+
+.slide.format-4-5 .subtitle,
+.slide.format-4-5 p {
+    font-size: 20px;
+    line-height: 1.45;
+}
+
+.slide.format-4-5 .emoji {
+    font-size: 65px;
+    margin-bottom: 15px;
+}
+
+/* Wrapper for preview */
+.slide-format-4-5 {
+    flex-shrink: 0;
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 0;
 }
 
 /* Адаптивность для мобильных устройств */
@@ -1093,29 +1212,178 @@ h1, h2 {
     transform: rotate(90deg);
 }
 
-/* --- Водяной знак GameInvitation.com --- */
-.slide::after {
-    content: attr(data-watermark);
-    position: absolute;
-    left: 20px;
-    bottom: 20px;
+/* --- Водяной знак GameInvitation.com (Удалено, теперь используется отдельный элемент .watermark-layer с настройками) --- */
+
+.add-element-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: rgba(30, 30, 30, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     color: white;
-    opacity: 0.5;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    z-index: 5;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    backdrop-filter: blur(5px);
+}
+
+.add-element-btn:hover {
+    background: white;
+    color: #1a1a1a;
+    transform: scale(1.1);
+    border-color: white;
+}
+
+.active-slide-label {
+    position: absolute;
+    top: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
     pointer-events: none;
-    line-height: 1;
+    z-index: 100;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
-.slide.format-9-16::after {
-    left: 12px;
-    bottom: 12px;
-    font-size: 10px;
+.layer-up-btn:hover:not(:disabled),
+.layer-down-btn:hover:not(:disabled) {
+    background: rgba(59, 130, 246, 0.3) !important;
 }
 
-/* Если водяной знак не задан, используем значение по умолчанию */
-.slide:not([data-watermark])::after {
-    content: "GameInvitation.com";
+.layer-up-btn:disabled,
+.layer-down-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* JSON Editor Panel Styles */
+#json-editor-panel .CodeMirror {
+    height: 100% !important;
+    font-size: 14px;
+    font-family: 'Courier New', 'Consolas', monospace;
+}
+
+#json-editor-panel .CodeMirror-gutters {
+    background: #21222c;
+    border-right: 1px solid #44475a;
+}
+
+#json-editor-panel .CodeMirror-linenumber {
+    color: #6272a4;
+}
+
+#close-json-editor:hover {
+    background: #ff6e6e !important;
+}
+
+#format-json-btn:hover {
+    background: #9fefff !important;
+}
+
+#apply-json-btn:hover {
+    background: #6bffab !important;
+}
+
+/* Sortable.js drag effects */
+.sortable-ghost {
+    opacity: 0.4;
+    background: rgba(139, 233, 253, 0.2);
+    border: 2px dashed #8be9fd;
+    border-radius: 12px;
+}
+
+.sortable-drag {
+    opacity: 1;
+    cursor: grabbing !important;
+    transform: rotate(2deg);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6) !important;
+    z-index: 9999 !important;
+}
+
+.uploaded-image-wrapper {
+    cursor: grab;
+}
+
+.uploaded-image-wrapper:active {
+    cursor: grabbing;
+}
+
+/* Стили для свободного позиционирования с interact.js */
+.free-positioning-active {
+    cursor: move !important;
+    touch-action: none;
+}
+
+.free-positioning-active.dragging {
+    opacity: 0.8;
+    z-index: 1000;
+    cursor: grabbing !important;
+}
+
+/* Стили для ручек изменения размера */
+.resize-handle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #3b82f6;
+    border: 2px solid white;
+    border-radius: 50%;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.1s;
+    pointer-events: all;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.resize-handle:hover {
+    transform: scale(1.3);
+    background: #2563eb;
+}
+
+.free-positioning-active:hover .resize-handle {
+    opacity: 1;
+}
+
+/* Направляющие линии */
+.center-guide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 999;
+}
+
+.guide-vertical,
+.guide-horizontal {
+    background: #3b82f6;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+}
+
+.guide-vertical {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 2px;
+    height: 100%;
+}
+
+.guide-horizontal {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 2px;
 }

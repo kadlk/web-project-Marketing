@@ -1,0 +1,157 @@
+{
+  "_comment": "========================================",
+  "_comment_1": "  ШПАРГАЛКА ПО НАСТРОЙКАМ JSON ПРОЕКТА",
+  "_comment_2": "========================================",
+
+  "projects": [
+    {
+      "id": "my-project-001",
+      "name": "Название вашего проекта",
+      "logo": "images/Logo/Logo GameInvitation.png",
+      "watermark": "GameInvitation.com",
+
+      "_logoSettings_comment": "Настройки логотипа",
+      "logoSettings": {
+        "height": 60,
+        "top": 40,
+        "left": 40,
+        "opacity": 1,
+        "shadow": "0px 2px 8px rgba(0, 0, 0, 0.5)",
+        "border": false,
+        "borderWidth": 0,
+        "borderColor": "#ffffff",
+        "borderRadius": 0
+      },
+
+      "slides": [
+        {
+          "id": 1,
+
+          "_background_comment": "type: gradient (2 цвета) или solid (1 цвет) | direction: 0-360 градусов | ВАЖНО: colors всегда массив!",
+          "background": {
+            "type": "gradient",
+            "colors": ["#1e3a8a", "#3b82f6"],
+            "direction": 135
+          },
+
+          "_background_solid_example": {
+            "type": "solid",
+            "colors": ["#1a1a1a"]
+          },
+
+          "_emoji_comment": "Эмодзи или null",
+          "emoji": "🎯",
+
+          "_title_comment": "tag: h1 или h2 | Используйте \\n для новой строки",
+          "title": {
+            "text": "Ваш заголовок\nМожет быть многострочным",
+            "tag": "h1"
+          },
+
+          "_subtitle_comment": "Подзаголовок или null",
+          "subtitle": {
+            "text": "Подзаголовок слайда"
+          },
+
+          "_paragraph_comment": "Основной текст или null",
+          "paragraph": {
+            "text": "Текст параграфа с описанием"
+          },
+
+          "_images_comment": "Массив изображений | size: 30-70",
+          "images": [
+            {
+              "src": "images/photo1.jpg",
+              "alt": "Описание",
+              "size": 50
+            }
+          ],
+
+          "_containerSettings_comment": "gap: 0-50 | align: center/space-between/flex-start/flex-end | direction: row/column | radius: 0-30",
+          "containerSettings": {
+            "gap": 15,
+            "align": "center",
+            "direction": "row",
+            "radius": 10
+          },
+
+          "_cta_comment": "Кнопка призыва к действию или null",
+          "cta": {
+            "text": "Кнопка →",
+            "color": "#0f766e"
+          }
+        }
+      ]
+    }
+  ],
+
+  "_quick_examples": {
+    "_gradient_presets": {
+      "blue_ocean": ["#1e3a8a", "#3b82f6"],
+      "purple_sunset": ["#7c3aed", "#a855f7"],
+      "turquoise_breeze": ["#0891b2", "#06b6d4"],
+      "green_forest": ["#059669", "#10b981"],
+      "red_fire": ["#dc2626", "#f43f5e"],
+      "blue_sapphire": ["#1e40af", "#3b82f6"],
+      "teal_aquamarine": ["#0f766e", "#14b8a6"]
+    },
+
+    "_recommended_sizes_1-1": {
+      "title": "52px",
+      "subtitle": "26px",
+      "paragraph": "22px",
+      "emoji": "80px"
+    },
+
+    "_recommended_sizes_4-5": {
+      "title": "44px",
+      "subtitle": "20px",
+      "paragraph": "20px",
+      "emoji": "65px"
+    },
+
+    "_recommended_sizes_9-16": {
+      "title": "32px",
+      "subtitle": "16-18px",
+      "paragraph": "16px",
+      "emoji": "45px"
+    },
+
+    "_align_options": [
+      "center - по центру",
+      "space-between - по краям",
+      "flex-start - слева/сверху",
+      "flex-end - справа/снизу",
+      "space-around - равномерно с отступами"
+    ],
+
+    "_direction_options": [
+      "row - горизонтально (в ряд)",
+      "column - вертикально (в столбик)"
+    ],
+
+    "_image_sizes": {
+      "1_image": "45-55%",
+      "2_images_row": "40-45%",
+      "3_images_row": "28-32%",
+      "2_images_column": "40-45%"
+    },
+
+    "_positioning_modes": {
+      "flex_layout": "Автоматическое выравнивание через containerSettings",
+      "free_positioning": "Свободное перетаскивание мышью (доступно в редакторе)"
+    },
+
+    "_tips": [
+      "Используйте \\n для переноса строк в тексте",
+      "Заголовки короткие (1-3 слова), подписи до 1 предложения",
+      "Для 1 картинки: size 45-55",
+      "Для 2 картинок в ряд: size 40-45, gap 15",
+      "Для 3 картинок в ряд: size 28-32, gap 8-10",
+      "Скругление 8-12px делает дизайн современнее",
+      "Используйте эмодзи для привлекательности",
+      "null означает что элемент не используется",
+      "НОВОЕ: Режим свободного позиционирования - перетаскивайте картинки мышью!"
+    ]
+  }
+}

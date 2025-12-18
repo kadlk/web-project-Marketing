@@ -1,0 +1,143 @@
+{
+  "projects": [
+    {
+      "id": "carousel-lastminute-birthday",
+      "name": "Забыла про День Рождения",
+      "logo": "images/logo.png",
+      "watermark": "GameInvitation.com",
+      "logoSettings": {
+        "height": 60,
+        "top": 40,
+        "left": 40,
+        "opacity": 1,
+        "shadow": "0px 2px 8px rgba(0,0,0,0.5)",
+        "border": false,
+        "borderWidth": 0,
+        "borderColor": "#ffffff",
+        "borderRadius": 0
+      },
+      "slides": [
+        {
+          "id": 1,
+          "background": {
+            "type": "gradient",
+            "colors": ["#dc2626", "#f43f5e"],
+            "direction": 135
+          },
+          "emoji": "😱",
+          "title": {
+            "text": "До полуночи\n10 минут",
+            "tag": "h1",
+            "style": {
+              "fontFamily": "Geologica",
+              "fontSize": "52px",
+              "textAlign": "center",
+              "color": "#ffffff"
+            }
+          },
+          "subtitle": {
+            "text": "А я забыла про ДР подруги...",
+            "style": {
+              "fontFamily": "Geologica",
+              "fontSize": "26px",
+              "textAlign": "center",
+              "color": "#ffffff"
+            }
+          },
+          "paragraph": null,
+          "images": [],
+          "containerSettings": {
+            "gap": 20,
+            "align": "center",
+            "direction": "row",
+            "radius": 10
+          },
+          "cta": null
+        },
+        {
+          "id": 2,
+          "background": {
+            "type": "gradient",
+            "colors": ["#7c3aed", "#a855f7"],
+            "direction": 135
+          },
+          "emoji": "💡",
+          "title": {
+            "text": "За 5 минут\nсоздала игру",
+            "tag": "h1",
+            "style": {
+              "fontFamily": "Geologica",
+              "fontSize": "52px",
+              "textAlign": "center",
+              "color": "#ffffff"
+            }
+          },
+          "subtitle": {
+            "text": "С нашими фото + сертификат на СПА внутри",
+            "style": {
+              "fontFamily": "Geologica",
+              "fontSize": "26px",
+              "textAlign": "center",
+              "color": "#ffffff"
+            }
+          },
+          "paragraph": null,
+          "images": [
+            {
+              "src": "images/game-constructor.jpg",
+              "alt": "Конструктор игры",
+              "size": 60
+            }
+          ],
+          "containerSettings": {
+            "gap": 20,
+            "align": "center",
+            "direction": "row",
+            "radius": 12
+          },
+          "cta": null
+        },
+        {
+          "id": 3,
+          "background": {
+            "type": "gradient",
+            "colors": ["#059669", "#10b981"],
+            "direction": 135
+          },
+          "emoji": "🎁",
+          "title": {
+            "text": "Её реакция:\n«ЛУЧШИЙ ПОДАРОК!»",
+            "tag": "h1",
+            "style": {
+              "fontFamily": "Geologica",
+              "fontSize": "52px",
+              "textAlign": "center",
+              "color": "#ffffff"
+            }
+          },
+          "subtitle": {
+            "text": "Прошла игру 3 раза и показала всем друзьям",
+            "style": {
+              "fontFamily": "Geologica",
+              "fontSize": "26px",
+              "textAlign": "center",
+              "color": "#ffffff"
+            }
+          },
+          "paragraph": null,
+          "images": [],
+          "containerSettings": {
+            "gap": 20,
+            "align": "center",
+            "direction": "row",
+            "radius": 10
+          },
+          "cta": {
+            "text": "Создать игру за 5 минут →",
+            "color": "#0f766e"
+          }
+        }
+      ]
+    }
+  ]
+}

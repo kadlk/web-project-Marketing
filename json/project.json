@@ -4,7 +4,7 @@
       "id": "project-1",
       "name": "Новогодняя кампания 2025",
       "logo": "images/Logo/Logo GameInvitation.png",
-      "watermark": "GameInvitation.com",
+      "watermark": "GameInvitat2ion.com",
       "logoSettings": {
         "height": 60,
         "top": 40,
@@ -37,6 +37,7 @@
           "containerSettings": {
             "gap": 15,
             "align": "center",
+            "direction": "row",
             "radius": 0
           },
           "cta": null
@@ -67,6 +68,7 @@
           "containerSettings": {
             "gap": 15,
             "align": "center",
+            "direction": "row",
             "radius": 8
           },
           "cta": null
@@ -102,6 +104,7 @@
           "containerSettings": {
             "gap": 20,
             "align": "center",
+            "direction": "row",
             "radius": 10
           },
           "cta": null
@@ -132,6 +135,7 @@
           "containerSettings": {
             "gap": 15,
             "align": "center",
+            "direction": "row",
             "radius": 0
           },
           "cta": null
@@ -162,6 +166,7 @@
           "containerSettings": {
             "gap": 15,
             "align": "center",
+            "direction": "row",
             "radius": 12
           },
           "cta": null
@@ -197,6 +202,7 @@
           "containerSettings": {
             "gap": 15,
             "align": "space-between",
+            "direction": "row",
             "radius": 8
           },
           "cta": null
@@ -227,6 +233,7 @@
           "containerSettings": {
             "gap": 15,
             "align": "center",
+            "direction": "row",
             "radius": 0
           },
           "cta": {
