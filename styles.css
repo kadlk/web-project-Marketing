@@ -241,7 +241,7 @@ body {
 /* Слой для номера слайда */
 .slide-number-layer {
     position: absolute;
-    z-index: 20; /* Поверх контента */
+    z-index: 9999; /* Над всеми элементами */
     pointer-events: auto; /* Чтобы можно было кликнуть/перетащить */
     user-select: none;
 }
@@ -321,13 +321,13 @@ body {
     max-width: 500px; /* Уменьшаем максимальную ширину для горизонтального отображения */
     aspect-ratio: 1/1;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     border-radius: 0;
     display: flex;
     flex-direction: column;
     justify-content: center; /* Центрирование по умолчанию для 1:1 */
     align-items: center;
-    padding: 30px;
+    padding: 40px 30px 30px 30px;
     text-align: center;
     transition: all 0.3s;
     flex-shrink: 0;
@@ -1103,12 +1103,38 @@ h1, h2 {
     border-radius: 25px;
 }
 
+/* --- 1:1 Формат - специальные стили для изображений --- */
+.slide.format-1-1 .slide-image-container {
+    margin: 10px 0;
+    padding: 8px;
+    gap: 8px;
+    max-width: 440px;
+}
+
+.slide.format-1-1 .slide-image {
+    max-width: 100px !important;
+    max-height: 100px !important;
+}
+
 /* --- 4:5 Формат --- */
 .slide.format-4-5 {
     aspect-ratio: 4/5 !important;
     max-width: 500px !important;
     padding: 30px !important;
     overflow-y: hidden; /* Обычно 4:5 влезает без скролла, если контент не огромный */
+}
+
+/* --- 4:5 Формат - специальные стили для изображений --- */
+.slide.format-4-5 .slide-image-container {
+    margin: 12px 0;
+    padding: 10px;
+    gap: 10px;
+    max-width: 440px;
+}
+
+.slide.format-4-5 .slide-image {
+    max-width: 110px !important;
+    max-height: 110px !important;
 }
 
 /* Стили для 4:5 элементов - наследуем или переопределяем */
@@ -1753,11 +1779,12 @@ h1, h2 {
 
 .watermark-layer {
     position: absolute;
-    z-index: 50;
-    pointer-events: none;
+    z-index: 9998;
+    pointer-events: auto;
     user-select: none;
     white-space: nowrap;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
 }
 
 .watermark-layer img {
@@ -1815,6 +1842,33 @@ input[type="color"]::-webkit-color-swatch {
     padding: 0 !important;
     border: none !important;
     gap: 10px;
+}
+
+/* For 1:1 and 4:5 formats, hide side images */
+.slide.format-1-1.layout-side-slide .slide-image-container,
+.slide.format-4-5.layout-side-slide .slide-image-container {
+    display: none !important;
+}
+
+.slide.format-1-1.layout-side-slide,
+.slide.format-4-5.layout-side-slide {
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 30px 30px 30px;
+}
+
+.slide.format-1-1.layout-side-slide .slide-content-wrapper,
+.slide.format-4-5.layout-side-slide .slide-content-wrapper {
+    width: 100%;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+}
+
+.slide.format-1-1.layout-side-slide .slide-content-wrapper > *,
+.slide.format-4-5.layout-side-slide .slide-content-wrapper > * {
+    width: 100%;
 }
 
 /* For 9:16 format, convert layout-side back to column */
