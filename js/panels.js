@@ -97,6 +97,32 @@ function createContainerSettingsPanel() {
                             Колонка
                         </button>
                     </div>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 8px;">
+                        <button class="layout-preset-btn" data-preset="image-left" title="Картинка слева" style="padding: 8px 4px; font-size: 11px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; cursor: pointer;">
+                            <div style="display: flex; gap: 2px; justify-content: flex-start; margin-bottom: 3px; width: 100%;">
+                                <div style="width: 14px; height: 12px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                            </div>
+                            Слева
+                        </button>
+                        <button class="layout-preset-btn" data-preset="image-right" title="Картинка справа" style="padding: 8px 4px; font-size: 11px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; cursor: pointer;">
+                            <div style="display: flex; gap: 2px; justify-content: flex-end; margin-bottom: 3px; width: 100%;">
+                                <div style="width: 14px; height: 12px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                            </div>
+                            Справа
+                        </button>
+                        <button class="layout-preset-btn" data-preset="image-top" title="Картинка сверху" style="padding: 8px 4px; font-size: 11px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; cursor: pointer;">
+                            <div style="display: flex; flex-direction: column; gap: 2px; align-items: center; justify-content: flex-start; margin-bottom: 3px; height: 20px;">
+                                <div style="width: 16px; height: 8px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                            </div>
+                            Сверху
+                        </button>
+                        <button class="layout-preset-btn" data-preset="image-bottom" title="Картинка снизу" style="padding: 8px 4px; font-size: 11px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; cursor: pointer;">
+                            <div style="display: flex; flex-direction: column; gap: 2px; align-items: center; justify-content: flex-end; margin-bottom: 3px; height: 20px;">
+                                <div style="width: 16px; height: 8px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                            </div>
+                            Снизу
+                        </button>
+                    </div>
                 </div>
 
                 <div style="margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
@@ -897,8 +923,8 @@ function applyLayoutPreset(container, preset) {
     const presetConfigs = {
         '2-row': {
             direction: 'row',
-            align: 'center',
-            gap: 15,
+            align: 'flex-start',
+            gap: 5,
             wrap: false,
             sizes: [48, 48]
         },
@@ -943,6 +969,34 @@ function applyLayoutPreset(container, preset) {
             gap: 15,
             wrap: false,
             sizes: [60, 60]
+        },
+        'image-left': {
+            direction: 'row',
+            align: 'flex-start',
+            gap: 0,
+            wrap: false,
+            sizes: [35]
+        },
+        'image-right': {
+            direction: 'row',
+            align: 'flex-end',
+            gap: 0,
+            wrap: false,
+            sizes: [35]
+        },
+        'image-top': {
+            direction: 'column',
+            align: 'center',
+            gap: 0,
+            wrap: false,
+            sizes: [60]
+        },
+        'image-bottom': {
+            direction: 'column',
+            align: 'center',
+            gap: 0,
+            wrap: false,
+            sizes: [60]
         }
     };
 
