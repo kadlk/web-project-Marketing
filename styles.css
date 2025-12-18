@@ -409,11 +409,13 @@ body {
 /* Обертка для загруженного изображения */
 .uploaded-image-wrapper {
     position: relative;
-    display: inline-block;
-    margin: 0; /* Remove margin - use gap in flex container instead */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
     cursor: move;
     transition: opacity 0.2s;
-    flex-shrink: 0; /* Prevent flex container from shrinking/growing this wrapper */
+    flex-shrink: 0;
 }
 
 .uploaded-image-wrapper:hover {
@@ -926,13 +928,12 @@ h1, h2 {
 .slide-image-container {
     display: flex;
     gap: 15px;
-    /* Дефолтные значения, которые JavaScript может перезаписать */
     justify-content: center;
     align-items: center;
     flex-direction: row;
+    flex-wrap: wrap;
     margin: 25px 0;
     width: 100%;
-    /* Визуальная рамка для понимания границ выравнивания */
     border: 2px dashed rgba(255, 255, 255, 0.15);
     padding: 15px;
     transition: border-color 0.3s ease;
