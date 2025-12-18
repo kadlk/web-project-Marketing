@@ -715,9 +715,9 @@ body {
     position: relative;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    word-break: break-word;
+    word-break: normal;
     white-space: pre-wrap;
-    hyphens: auto;
+    hyphens: none;
     max-width: 100%;
 }
 
@@ -730,8 +730,9 @@ h1.editable-text,
 h2.editable-text {
     word-wrap: break-word;
     overflow-wrap: break-word;
-    word-break: break-word;
+    word-break: normal;
     white-space: pre-wrap;
+    hyphens: none;
     max-width: 100%;
     padding: 0 10px;
 }
@@ -740,8 +741,9 @@ p.editable-text,
 .subtitle.editable-text {
     word-wrap: break-word;
     overflow-wrap: break-word;
-    word-break: break-word;
+    word-break: normal;
     white-space: pre-wrap;
+    hyphens: none;
     max-width: 100%;
     padding: 0 10px;
 }

@@ -38,6 +38,68 @@ function createContainerSettingsPanel() {
                 </div>
                 
                 <div style="margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                    <label style="font-size: 13px; font-weight: bold; margin-bottom: 8px; display: block;">Шаблоны раскладки:</label>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px;">
+                        <button class="layout-preset-btn" data-preset="2-row" title="2 в ряд" style="padding: 8px 4px; font-size: 11px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; cursor: pointer;">
+                            <div style="display: flex; gap: 2px; justify-content: center; margin-bottom: 3px;">
+                                <div style="width: 16px; height: 12px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                                <div style="width: 16px; height: 12px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                            </div>
+                            2 в ряд
+                        </button>
+                        <button class="layout-preset-btn" data-preset="3-row" title="3 в ряд" style="padding: 8px 4px; font-size: 11px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; cursor: pointer;">
+                            <div style="display: flex; gap: 2px; justify-content: center; margin-bottom: 3px;">
+                                <div style="width: 10px; height: 12px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                                <div style="width: 10px; height: 12px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                                <div style="width: 10px; height: 12px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                            </div>
+                            3 в ряд
+                        </button>
+                        <button class="layout-preset-btn" data-preset="4-row" title="4 в ряд" style="padding: 8px 4px; font-size: 11px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; cursor: pointer;">
+                            <div style="display: flex; gap: 2px; justify-content: center; margin-bottom: 3px;">
+                                <div style="width: 8px; height: 12px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                                <div style="width: 8px; height: 12px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                                <div style="width: 8px; height: 12px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                                <div style="width: 8px; height: 12px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                            </div>
+                            4 в ряд
+                        </button>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;">
+                        <button class="layout-preset-btn" data-preset="1-big-center" title="1 большая по центру" style="padding: 8px 4px; font-size: 11px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; cursor: pointer;">
+                            <div style="display: flex; gap: 2px; justify-content: center; align-items: center; margin-bottom: 3px;">
+                                <div style="width: 24px; height: 18px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                            </div>
+                            1 большая
+                        </button>
+                        <button class="layout-preset-btn" data-preset="small-big-small" title="Маленькая-Большая-Маленькая" style="padding: 8px 4px; font-size: 11px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; cursor: pointer;">
+                            <div style="display: flex; gap: 2px; justify-content: center; align-items: center; margin-bottom: 3px;">
+                                <div style="width: 8px; height: 10px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                                <div style="width: 16px; height: 14px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                                <div style="width: 8px; height: 10px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                            </div>
+                            М-Б-М
+                        </button>
+                        <button class="layout-preset-btn" data-preset="2x2-grid" title="Сетка 2x2" style="padding: 8px 4px; font-size: 11px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; cursor: pointer;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2px; justify-items: center; margin-bottom: 3px;">
+                                <div style="width: 12px; height: 10px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                                <div style="width: 12px; height: 10px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                                <div style="width: 12px; height: 10px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                                <div style="width: 12px; height: 10px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                            </div>
+                            Сетка 2x2
+                        </button>
+                        <button class="layout-preset-btn" data-preset="column" title="В колонку" style="padding: 8px 4px; font-size: 11px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; cursor: pointer;">
+                            <div style="display: flex; flex-direction: column; gap: 2px; align-items: center; margin-bottom: 3px;">
+                                <div style="width: 20px; height: 6px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                                <div style="width: 20px; height: 6px; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
+                            </div>
+                            Колонка
+                        </button>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
                     <label style="font-size: 13px; font-weight: bold; margin-bottom: 5px; display: block;">Режим позиционирования:</label>
                     <div style="display: flex; gap: 5px; margin: 5px 0;">
                         <button id="positioning-mode-flex" class="positioning-mode-btn active" title="Flex Layout" style="flex: 1; padding: 8px; font-size: 12px; background: rgba(59, 130, 246, 0.3); border: 1px solid #3b82f6;">📐 Flex Layout</button>
@@ -712,6 +774,27 @@ function createContainerSettingsPanel() {
         toggleFreePositioningMode(slideIndex, true);
     });
 
+    // Layout Preset Buttons
+    const layoutPresetBtns = panel.querySelectorAll('.layout-preset-btn');
+    layoutPresetBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (!selectedImageContainer) return;
+
+            const preset = btn.dataset.preset;
+            applyLayoutPreset(selectedImageContainer, preset);
+        });
+
+        btn.addEventListener('mouseenter', () => {
+            btn.style.background = 'rgba(59, 130, 246, 0.3)';
+            btn.style.borderColor = '#3b82f6';
+        });
+
+        btn.addEventListener('mouseleave', () => {
+            btn.style.background = 'rgba(255,255,255,0.1)';
+            btn.style.borderColor = 'rgba(255,255,255,0.2)';
+        });
+    });
+
     // Initialize Gradient Presets
     const presetsContainer = panel.querySelector('#gradient-presets-container');
     const gradientPresets = [
@@ -797,6 +880,171 @@ function createContainerSettingsPanel() {
 }
 
 // Показываем панель настроек контейнера
+function applyLayoutPreset(container, preset) {
+    if (!container) return;
+
+    saveStateForUndo();
+
+    const slide = container.closest('.slide');
+    const is916 = slide && slide.classList.contains('format-9-16');
+    const format = is916 ? '9-16' : '1-1';
+    const slideIndex = parseInt(container.dataset.slideIndex);
+    const settingsKey = `container_${slideIndex}_${format}`;
+
+    const images = container.querySelectorAll('img');
+    const imageCount = images.length;
+
+    const presetConfigs = {
+        '2-row': {
+            direction: 'row',
+            align: 'center',
+            gap: 15,
+            wrap: false,
+            sizes: [48, 48]
+        },
+        '3-row': {
+            direction: 'row',
+            align: 'center',
+            gap: 10,
+            wrap: false,
+            sizes: [30, 30, 30]
+        },
+        '4-row': {
+            direction: 'row',
+            align: 'center',
+            gap: 8,
+            wrap: false,
+            sizes: [23, 23, 23, 23]
+        },
+        '1-big-center': {
+            direction: 'row',
+            align: 'center',
+            gap: 0,
+            wrap: false,
+            sizes: [80]
+        },
+        'small-big-small': {
+            direction: 'row',
+            align: 'center',
+            gap: 10,
+            wrap: false,
+            sizes: [20, 50, 20]
+        },
+        '2x2-grid': {
+            direction: 'row',
+            align: 'center',
+            gap: 10,
+            wrap: true,
+            sizes: [45, 45, 45, 45]
+        },
+        'column': {
+            direction: 'column',
+            align: 'center',
+            gap: 15,
+            wrap: false,
+            sizes: [60, 60]
+        }
+    };
+
+    const config = presetConfigs[preset];
+    if (!config) return;
+
+    container.style.flexDirection = config.direction;
+    container.style.justifyContent = config.align;
+    container.style.alignItems = 'center';
+    container.style.gap = config.gap + 'px';
+    container.style.flexWrap = config.wrap ? 'wrap' : 'nowrap';
+
+    if (config.wrap && config.direction === 'row') {
+        container.style.alignContent = config.align;
+    }
+
+    container.dataset.justifyContent = config.align;
+    container.dataset.direction = config.direction;
+
+    images.forEach((img, i) => {
+        const sizeForImage = config.sizes[i] || config.sizes[config.sizes.length - 1] || 30;
+        img.style.setProperty('max-width', sizeForImage + '%', 'important');
+
+        if (img.dataset.sizeKey) {
+            const formatSizeKey = `${img.dataset.sizeKey}_${format}`;
+            imageSizes[formatSizeKey] = sizeForImage;
+        }
+    });
+
+    containerSettings[settingsKey] = {
+        gap: config.gap,
+        radius: containerSettings[settingsKey]?.radius || 0,
+        align: config.align,
+        direction: config.direction,
+        height: containerSettings[settingsKey]?.height || 0,
+        wrap: config.wrap
+    };
+
+    const selector = is916 ? '.slide.format-9-16' : '.slide:not(.format-9-16)';
+    const otherSlides = document.querySelectorAll(selector);
+    otherSlides.forEach(s => {
+        if (s === slide) return;
+        const otherContainer = s.querySelector(`.slide-image-container[data-slide-index="${slideIndex}"]`);
+        if (otherContainer) {
+            otherContainer.style.flexDirection = config.direction;
+            otherContainer.style.justifyContent = config.align;
+            otherContainer.style.alignItems = 'center';
+            otherContainer.style.gap = config.gap + 'px';
+            otherContainer.style.flexWrap = config.wrap ? 'wrap' : 'nowrap';
+
+            if (config.wrap && config.direction === 'row') {
+                otherContainer.style.alignContent = config.align;
+            }
+
+            const otherImages = otherContainer.querySelectorAll('img');
+            otherImages.forEach((img, i) => {
+                const sizeForImage = config.sizes[i] || config.sizes[config.sizes.length - 1] || 30;
+                img.style.setProperty('max-width', sizeForImage + '%', 'important');
+            });
+        }
+    });
+
+    const panel = document.getElementById('container-settings-panel');
+    if (panel) {
+        panel.querySelector('#container-gap-slider').value = config.gap;
+        panel.querySelector('#container-gap-input').value = config.gap;
+        panel.querySelector('#container-gap-value').textContent = config.gap;
+
+        panel.querySelector('#container-wrap-checkbox').checked = config.wrap;
+
+        const dirBtns = panel.querySelectorAll('.dir-btn');
+        dirBtns.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.dir === config.direction) {
+                btn.classList.add('active');
+            }
+        });
+
+        const alignBtns = panel.querySelectorAll('.align-btn-control');
+        alignBtns.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.align === config.align) {
+                btn.classList.add('active');
+            }
+            if (config.direction === 'row') {
+                if (btn.dataset.align === 'flex-start') btn.textContent = '⬅';
+                else if (btn.dataset.align === 'flex-end') btn.textContent = '➡';
+            } else {
+                if (btn.dataset.align === 'flex-start') btn.textContent = '⬆';
+                else if (btn.dataset.align === 'flex-end') btn.textContent = '⬇';
+            }
+        });
+    }
+
+    if (slide && window.fitSlideContent) {
+        window.fitSlideContent(slide);
+    }
+
+    saveToLocalStorage();
+    showNotification('Шаблон применен', 'success');
+}
+
 function showContainerSettingsPanel(container, slideIndex, targetImage = null, slideRef = null) {
     console.log('showContainerSettingsPanel called:', { container: !!container, slideIndex, targetImage: !!targetImage, slideRef: !!slideRef });
     
