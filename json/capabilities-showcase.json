@@ -256,7 +256,8 @@
             "gap": 25,
             "align": "center",
             "direction": "row",
-            "radius": 13
+            "radius": 13,
+            "preset": "image-right"
           },
           "cta": {
             "text": "Начать →",

@@ -329,6 +329,12 @@ function createSlideFromJSON(slideData, slideIndex, totalSlides, logo, watermark
         });
 
         if (preset === 'image-left' || preset === 'image-right') {
+            slide.classList.add('layout-side-slide');
+            if (preset === 'image-left') {
+                slide.classList.add('image-left');
+            } else {
+                slide.classList.add('image-right');
+            }
             slide.appendChild(container);
         } else {
             contentWrapper.appendChild(container);
@@ -579,6 +585,20 @@ function generateSlides(project) {
                  if (s.y !== undefined) wm.style.top = s.y + '%';
              });
         }
+
+        // Масштабируем изображения для узких форматов (9:16)
+        const slides916 = document.querySelectorAll('.slide.format-9-16');
+        slides916.forEach(slide => {
+            const images = slide.querySelectorAll('img.slide-image');
+            images.forEach(img => {
+                const currentWidth = parseFloat(img.style.maxWidth || 100);
+                if (currentWidth > 80) {
+                    img.style.setProperty('max-width', '75%', 'important');
+                } else if (currentWidth > 50) {
+                    img.style.setProperty('max-width', '45%', 'important');
+                }
+            });
+        });
 
         // Apply scaling LAST, after all layout settings (gaps, flex, etc) are applied
         const allSlides = document.querySelectorAll('.slide');

@@ -942,14 +942,15 @@ h1, h2 {
 }
 
 .slide-image-container.layout-side {
-    margin: 0;
-    padding: 0;
+    margin: 0 !important;
+    padding: 0 !important;
     border: none;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
+    width: auto;
+    height: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .slide-image-container.layout-top,
@@ -1058,15 +1059,41 @@ h1, h2 {
 .slide.format-9-16 .slide-image-container {
     gap: 6px;
     margin: 8px 0;
+    flex-wrap: nowrap;
+    width: 100%;
+    padding: 0 10px;
+}
+
+.slide.format-9-16 .slide-image-container.layout-side {
+    flex-direction: column;
+    margin: 8px 0;
+    padding: 0;
+    position: static;
+    width: 100%;
+    height: auto;
+    border: none;
+}
+
+.slide.format-9-16 .slide-image-container.layout-top,
+.slide.format-9-16 .slide-image-container.layout-bottom {
+    flex-direction: column;
+    width: 100%;
+    margin: 8px 0;
+    padding: 0;
 }
 .slide.format-9-16 .slide-image-container .slide-image {
-    /* max-width и max-height управляются динамически через JavaScript */
-    /* Empty rule kept for documentation or future use, but commented out to silence linter if needed.
-       Actually, linter complained about empty ruleset. Adding a comment inside makes it not empty technically? 
-       No, usually it needs a property.
-       I will just remove it or add a dummy property.
-    */
-    display: block; /* Ensure block display just in case */
+    display: block;
+    height: auto;
+    margin: 4px 0;
+}
+
+.slide.format-9-16 .slide-image-container.layout-side .slide-image {
+    max-height: 250px;
+}
+
+.slide.format-9-16 .slide-image-container.layout-top .slide-image,
+.slide.format-9-16 .slide-image-container.layout-bottom .slide-image {
+    max-height: 150px;
 }
 
 .slide.format-9-16.slide-7 .cta {
@@ -1758,4 +1785,55 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 input[type="color"]::-webkit-color-swatch {
     border: none;
     border-radius: 4px;
+}
+
+/* Layout-side styles for text wrapping around images */
+.slide.layout-side-slide {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 25px;
+}
+
+.slide.layout-side-slide.image-right {
+    flex-direction: row-reverse;
+}
+
+.slide.layout-side-slide.image-left .slide-content-wrapper {
+    flex: 1;
+    order: 1;
+}
+
+.slide.layout-side-slide.image-right .slide-content-wrapper {
+    flex: 1;
+    order: 2;
+}
+
+.slide.layout-side-slide .slide-image-container {
+    flex-shrink: 0;
+    width: auto;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    gap: 10px;
+}
+
+/* For 9:16 format, convert layout-side back to column */
+.slide.format-9-16.layout-side-slide {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.slide.format-9-16.layout-side-slide.image-right {
+    flex-direction: column;
+}
+
+.slide.format-9-16.layout-side-slide .slide-content-wrapper {
+    order: 0;
+    width: 100%;
+}
+
+.slide.format-9-16.layout-side-slide .slide-image-container {
+    width: 100%;
+    margin: 8px 0 !important;
 }
