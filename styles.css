@@ -711,13 +711,37 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     position: relative;
-    word-break: break-word; /* Ensure long words break */
-    white-space: pre-wrap;  /* Preserve lines and wrap */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    white-space: pre-wrap;
+    hyphens: auto;
+    max-width: 100%;
 }
 
 .editable-text:hover {
     outline: 2px dashed rgba(59, 130, 246, 0.5);
     outline-offset: 2px;
+}
+
+h1.editable-text,
+h2.editable-text {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    white-space: pre-wrap;
+    max-width: 100%;
+    padding: 0 10px;
+}
+
+p.editable-text,
+.subtitle.editable-text {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    white-space: pre-wrap;
+    max-width: 100%;
+    padding: 0 10px;
 }
 
 /* Контекстное меню для изображений */
@@ -1386,4 +1410,330 @@ h1, h2 {
     left: 0;
     width: 100%;
     height: 2px;
+}
+
+.transform-panel {
+    position: fixed;
+    background: rgba(20, 20, 25, 0.98);
+    border-radius: 16px;
+    width: 320px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    z-index: 100005;
+    display: none;
+    backdrop-filter: blur(20px);
+}
+
+.transform-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px 16px 0 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.transform-panel-header h4 {
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.transform-panel-close {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.transform-panel-close:hover {
+    background: #ef4444;
+}
+
+.transform-panel-body {
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.transform-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.transform-section label {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.transform-section input[type="range"] {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.transform-section input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #3b82f6;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.transform-section input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.transform-section select,
+.transform-section .text-input {
+    width: 100%;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.transform-section select:focus,
+.transform-section .text-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.transform-section select option {
+    background: #1a1a1a;
+    color: white;
+}
+
+.rotation-presets {
+    display: flex;
+    gap: 6px;
+}
+
+.rotation-presets button {
+    flex: 1;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.rotation-presets button:hover {
+    background: rgba(59, 130, 246, 0.3);
+    border-color: #3b82f6;
+}
+
+.flip-buttons,
+.align-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.flip-btn {
+    flex: 1;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: white;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.flip-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.flip-btn.active {
+    background: rgba(59, 130, 246, 0.4);
+    border-color: #3b82f6;
+}
+
+.align-btn-h,
+.align-btn-v {
+    flex: 1;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.align-btn-h:hover,
+.align-btn-v:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.align-btn-h.active,
+.align-btn-v.active {
+    background: rgba(59, 130, 246, 0.4);
+    border-color: #3b82f6;
+}
+
+.transform-actions {
+    flex-direction: row !important;
+    gap: 10px;
+    margin-top: 8px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.reset-btn {
+    flex: 1;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.reset-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.delete-btn {
+    flex: 1;
+    padding: 12px;
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    border-radius: 8px;
+    color: #ef4444;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.delete-btn:hover {
+    background: rgba(239, 68, 68, 0.4);
+}
+
+.position-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+}
+
+.pos-btn {
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pos-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.pos-btn.active {
+    background: rgba(59, 130, 246, 0.4);
+    border-color: #3b82f6;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.toggle-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #3b82f6;
+    cursor: pointer;
+}
+
+.upload-btn {
+    padding: 10px;
+    background: rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    border-radius: 8px;
+    color: #3b82f6;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+}
+
+.upload-btn:hover {
+    background: rgba(59, 130, 246, 0.3);
+}
+
+.watermark-layer {
+    position: absolute;
+    z-index: 50;
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.watermark-layer img {
+    display: block;
+}
+
+.watermark-panel {
+    width: 360px;
+}
+
+input[type="color"] {
+    width: 100%;
+    height: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    cursor: pointer;
+    background: transparent;
+    padding: 4px;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 4px;
 }

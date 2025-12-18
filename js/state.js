@@ -13,6 +13,7 @@ let logoSettings = {}; // Хранилище настроек логотипа
 let slideNumberSettings = {}; // Хранилище настроек номера слайда
 let watermarkSettings = {}; // Хранилище настроек водяного знака
 let slideSettings = {}; // Хранилище настроек слайда (фон, эмоджи, backdrop)
+let imageTransformSettings = {}; // Хранилище настроек трансформации изображений
 
 // Текущие выбранные элементы
 let selectedImage = null;
@@ -34,9 +35,10 @@ function saveStateForUndo() {
         slideNumberSettings: JSON.parse(JSON.stringify(slideNumberSettings)),
         watermarkSettings: JSON.parse(JSON.stringify(watermarkSettings)),
         slideSettings: JSON.parse(JSON.stringify(slideSettings)),
+        imageTransformSettings: JSON.parse(JSON.stringify(imageTransformSettings)),
         timestamp: Date.now()
     };
-    
+
     undoStack.push(state);
     if (undoStack.length > MAX_UNDO_STEPS) {
             undoStack.shift();
@@ -62,9 +64,10 @@ function undo() {
         slideNumberSettings: JSON.parse(JSON.stringify(slideNumberSettings)),
         watermarkSettings: JSON.parse(JSON.stringify(watermarkSettings)),
         slideSettings: JSON.parse(JSON.stringify(slideSettings)),
+        imageTransformSettings: JSON.parse(JSON.stringify(imageTransformSettings)),
         timestamp: Date.now()
     };
-    
+
     redoStack.push(currentState);
     if (redoStack.length > MAX_UNDO_STEPS) {
         redoStack.shift();
@@ -93,14 +96,15 @@ function redo() {
         slideNumberSettings: JSON.parse(JSON.stringify(slideNumberSettings)),
         watermarkSettings: JSON.parse(JSON.stringify(watermarkSettings)),
         slideSettings: JSON.parse(JSON.stringify(slideSettings)),
+        imageTransformSettings: JSON.parse(JSON.stringify(imageTransformSettings)),
         timestamp: Date.now()
     };
-    
+
     undoStack.push(currentState);
     if (undoStack.length > MAX_UNDO_STEPS) {
         undoStack.shift();
     }
-    
+
     const nextState = redoStack.pop();
     restoreState(nextState);
     showNotification('Повторено', 'success');
@@ -118,7 +122,8 @@ function restoreState(state) {
     slideNumberSettings = state.slideNumberSettings ? JSON.parse(JSON.stringify(state.slideNumberSettings)) : {};
     watermarkSettings = state.watermarkSettings ? JSON.parse(JSON.stringify(state.watermarkSettings)) : {};
     slideSettings = state.slideSettings ? JSON.parse(JSON.stringify(state.slideSettings)) : {};
-    
+    imageTransformSettings = state.imageTransformSettings ? JSON.parse(JSON.stringify(state.imageTransformSettings)) : {};
+
     if (currentProjectId) {
         const project = projectsData.find(p => p.id === currentProjectId);
         if (project) {
@@ -141,6 +146,7 @@ function saveToLocalStorage() {
         localStorage.setItem('slideNumberSettings', JSON.stringify(slideNumberSettings));
         localStorage.setItem('watermarkSettings', JSON.stringify(watermarkSettings));
         localStorage.setItem('slideSettings', JSON.stringify(slideSettings));
+        localStorage.setItem('imageTransformSettings', JSON.stringify(imageTransformSettings));
     } catch (e) {
         // Если localStorage переполнен, пытаемся очистить старые данные
         if (e.name === 'QuotaExceededError') {
@@ -216,6 +222,11 @@ function loadFromLocalStorage() {
         const savedSlideSettings = localStorage.getItem('slideSettings');
         if (savedSlideSettings) {
             slideSettings = JSON.parse(savedSlideSettings);
+        }
+
+        const savedImageTransformSettings = localStorage.getItem('imageTransformSettings');
+        if (savedImageTransformSettings) {
+            imageTransformSettings = JSON.parse(savedImageTransformSettings);
         }
 
     } catch (e) {

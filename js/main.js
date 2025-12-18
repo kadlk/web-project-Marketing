@@ -33,8 +33,20 @@ document.addEventListener('DOMContentLoaded', () => {
     initEditJSON();
     initExport();
     initTextEditing();
-    initAddElements(); // Initialize add elements sidebar
+    initAddElements();
+    initWatermarkButton();
 });
+
+function initWatermarkButton() {
+    const watermarkBtn = document.getElementById('watermark-btn');
+    if (watermarkBtn) {
+        watermarkBtn.addEventListener('click', () => {
+            if (typeof WatermarkSystem !== 'undefined') {
+                WatermarkSystem.createWatermarkPanel();
+            }
+        });
+    }
+}
 
 // Глобальная переменная для отслеживания активного слайда
 let activeSlideIndex = 0;
