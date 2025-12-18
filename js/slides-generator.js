@@ -281,6 +281,16 @@ function createSlideFromJSON(slideData, slideIndex, totalSlides, logo, watermark
             container.style.justifyContent = align;
         }
 
+        const preset = containerSettingsData.preset;
+        container.classList.remove('layout-side', 'layout-top', 'layout-bottom');
+        if (preset === 'image-left' || preset === 'image-right') {
+            container.classList.add('layout-side');
+        } else if (preset === 'image-top') {
+            container.classList.add('layout-top');
+        } else if (preset === 'image-bottom') {
+            container.classList.add('layout-bottom');
+        }
+
         // Сохраняем настройки контейнера в глобальное хранилище для всех форматов
         const settingsKey11 = `container_${slideIndex}_1-1`;
         const settingsKey916 = `container_${slideIndex}_9-16`;
@@ -290,19 +300,22 @@ function createSlideFromJSON(slideData, slideIndex, totalSlides, logo, watermark
             gap: gap,
             align: align,
             direction: direction,
-            radius: radius
+            radius: radius,
+            preset: preset
         };
         containerSettings[settingsKey916] = {
             gap: gap,
             align: align,
             direction: direction,
-            radius: radius
+            radius: radius,
+            preset: preset
         };
         containerSettings[settingsKey45] = {
             gap: gap,
             align: align,
             direction: direction,
-            radius: radius
+            radius: radius,
+            preset: preset
         };
 
         slideData.images.forEach(imgData => {
@@ -315,7 +328,11 @@ function createSlideFromJSON(slideData, slideIndex, totalSlides, logo, watermark
             img.style.borderRadius = radius + 'px';
         });
 
-        contentWrapper.appendChild(container);
+        if (preset === 'image-left' || preset === 'image-right') {
+            slide.appendChild(container);
+        } else {
+            contentWrapper.appendChild(container);
+        }
     }
     
     // CTA

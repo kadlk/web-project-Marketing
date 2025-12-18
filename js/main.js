@@ -674,7 +674,8 @@ function initSaveJSON() {
                     gap: savedSettings.gap || 15,
                     align: savedSettings.align || 'center',
                     direction: savedSettings.direction || 'row',
-                    radius: savedSettings.radius || 0
+                    radius: savedSettings.radius || 0,
+                    preset: savedSettings.preset
                 };
             } else {
                 // Default settings if not customized
@@ -954,7 +955,8 @@ function initEditJSON() {
                     gap: savedSettings.gap || 15,
                     align: savedSettings.align || 'center',
                     direction: savedSettings.direction || 'row',
-                    radius: savedSettings.radius || 0
+                    radius: savedSettings.radius || 0,
+                    preset: savedSettings.preset
                 };
             }
 

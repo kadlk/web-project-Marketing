@@ -453,6 +453,9 @@ function createContainerSettingsPanel() {
             const height = parseInt(heightInput.value);
             const finalHeight = height < 0 ? 0 : (height > 500 ? 500 : height);
 
+            const scale = parseInt(scaleInput.value);
+            const finalScale = (scale < 10 ? 10 : (scale > 200 ? 200 : scale)) / 100;
+
             const wrap = wrapCheckbox.checked;
 
             const align = selectedImageContainer.dataset.justifyContent || 'center';
@@ -473,6 +476,8 @@ function createContainerSettingsPanel() {
                         container.style.flexDirection = direction;
                         container.style.borderRadius = finalRadius + 'px';
                         container.style.flexWrap = wrap ? 'wrap' : 'nowrap';
+                        container.style.transform = `scale(${finalScale})`;
+                        container.style.transformOrigin = 'top center';
 
                         if (finalHeight > 0) {
                             container.style.minHeight = finalHeight + 'px';
@@ -502,7 +507,8 @@ function createContainerSettingsPanel() {
                     align: align,
                     direction: direction,
                     height: finalHeight,
-                    wrap: wrap
+                    wrap: wrap,
+                    scale: finalScale
                 };
             }
         }
@@ -923,8 +929,8 @@ function applyLayoutPreset(container, preset) {
     const presetConfigs = {
         '2-row': {
             direction: 'row',
-            align: 'flex-start',
-            gap: 5,
+            align: 'center',
+            gap: 0,
             wrap: false,
             sizes: [48, 48]
         },
@@ -1016,6 +1022,15 @@ function applyLayoutPreset(container, preset) {
     container.dataset.justifyContent = config.align;
     container.dataset.direction = config.direction;
 
+    container.classList.remove('layout-side', 'layout-top', 'layout-bottom');
+    if (preset === 'image-left' || preset === 'image-right') {
+        container.classList.add('layout-side');
+    } else if (preset === 'image-top') {
+        container.classList.add('layout-top');
+    } else if (preset === 'image-bottom') {
+        container.classList.add('layout-bottom');
+    }
+
     images.forEach((img, i) => {
         const sizeForImage = config.sizes[i] || config.sizes[config.sizes.length - 1] || 30;
         img.style.setProperty('max-width', sizeForImage + '%', 'important');
@@ -1032,7 +1047,8 @@ function applyLayoutPreset(container, preset) {
         align: config.align,
         direction: config.direction,
         height: containerSettings[settingsKey]?.height || 0,
-        wrap: config.wrap
+        wrap: config.wrap,
+        preset: preset
     };
 
     const selector = is916 ? '.slide.format-9-16' : '.slide:not(.format-9-16)';
@@ -1049,6 +1065,15 @@ function applyLayoutPreset(container, preset) {
 
             if (config.wrap && config.direction === 'row') {
                 otherContainer.style.alignContent = config.align;
+            }
+
+            otherContainer.classList.remove('layout-side', 'layout-top', 'layout-bottom');
+            if (preset === 'image-left' || preset === 'image-right') {
+                otherContainer.classList.add('layout-side');
+            } else if (preset === 'image-top') {
+                otherContainer.classList.add('layout-top');
+            } else if (preset === 'image-bottom') {
+                otherContainer.classList.add('layout-bottom');
             }
 
             const otherImages = otherContainer.querySelectorAll('img');
