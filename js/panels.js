@@ -495,8 +495,10 @@ function createContainerSettingsPanel() {
                         console.log('[APPLY] Container styles:', container.style.cssText);
 
                         const images = container.querySelectorAll('img');
-                        images.forEach(img => {
+                        images.forEach((img, index) => {
                              img.style.borderRadius = finalRadius + 'px';
+                             const marginPx = Math.max(finalGap / 2, 4);
+                             img.style.margin = marginPx + 'px';
                         });
                     }
                 });
@@ -1034,6 +1036,8 @@ function applyLayoutPreset(container, preset) {
     images.forEach((img, i) => {
         const sizeForImage = config.sizes[i] || config.sizes[config.sizes.length - 1] || 30;
         img.style.setProperty('max-width', sizeForImage + '%', 'important');
+        const marginPx = Math.max(config.gap / 2, 4);
+        img.style.margin = marginPx + 'px';
 
         if (img.dataset.sizeKey) {
             const formatSizeKey = `${img.dataset.sizeKey}_${format}`;
@@ -1080,6 +1084,8 @@ function applyLayoutPreset(container, preset) {
             otherImages.forEach((img, i) => {
                 const sizeForImage = config.sizes[i] || config.sizes[config.sizes.length - 1] || 30;
                 img.style.setProperty('max-width', sizeForImage + '%', 'important');
+                const marginPx = Math.max(config.gap / 2, 4);
+                img.style.margin = marginPx + 'px';
             });
         }
     });
