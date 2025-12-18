@@ -358,27 +358,13 @@ function createSlideFromJSON(slideData, slideIndex, totalSlides, logo, watermark
     const wm = document.createElement('div');
     wm.className = 'watermark-layer';
     wm.textContent = (watermarkSettings && watermarkSettings.text) || watermark || 'GameInvitation.com';
-    wm.style.position = 'absolute';
-    
-    // Позиционирование:
-    wm.style.bottom = '10px'; // Отступ от нижнего края (вместо top: 50%)
-    wm.style.left = '14%';    // Центрирование по горизонтали
-    wm.style.transform = 'translateX(-50%)'; // Сдвиг влево на половину ширины самого текста
-    
-    wm.style.opacity = '0.5';  // Сделал чуть ярче, чтобы было видно
-    wm.style.pointerEvents = 'auto'; 
-    wm.style.cursor = 'pointer';
-    wm.style.zIndex = '5';
-    wm.style.whiteSpace = 'nowrap';
-    wm.style.color = '#ffffff';
-    wm.style.fontSize = '12px';
     wm.title = 'Настроить водяной знак';
-    
+
     wm.addEventListener('click', (e) => {
         e.stopPropagation();
         showWatermarkSettingsPanel();
     });
-    
+
     slide.appendChild(wm);
     
     return slide;

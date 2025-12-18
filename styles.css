@@ -318,16 +318,16 @@ body {
 /* --- Общие стили слайда (1:1) --- */
 .slide {
     width: 100%;
-    max-width: 500px; /* Уменьшаем максимальную ширину для горизонтального отображения */
+    max-width: 500px;
     aspect-ratio: 1/1;
     position: relative;
-    overflow: visible;
+    overflow: hidden;
     border-radius: 0;
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Центрирование по умолчанию для 1:1 */
+    justify-content: center;
     align-items: center;
-    padding: 40px 30px 30px 30px;
+    padding: 50px 25px 35px 25px;
     text-align: center;
     transition: all 0.3s;
     flex-shrink: 0;
@@ -866,44 +866,56 @@ p.editable-text,
 
 .slide-number {
     position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 12px;
+    right: 12px;
     color: rgba(255,255,255,0.5);
-    font-size: 18px;
+    font-size: 14px;
     font-weight: 600;
-    z-index: 10;
+    z-index: 9997;
+}
+
+.slide.format-9-16 .slide-number {
+    bottom: 8px !important;
+    right: 8px !important;
+    font-size: 10px !important;
+}
+
+.slide.format-4-5 .slide-number {
+    bottom: 10px;
+    right: 10px;
+    font-size: 12px;
 }
 
 /* Все заголовки H1/H2 унифицированы по размеру */
 h1, h2 {
-    font-size: 52px;
+    font-size: 38px;
     font-weight: 900;
     color: white;
-    line-height: 1.1;
-    margin-bottom: 20px; /* Стандартизированный отступ */
-    text-shadow: 0 4px 30px rgba(0,0,0,0.5);
+    line-height: 1.15;
+    margin-bottom: 12px;
+    text-shadow: 0 3px 20px rgba(0,0,0,0.4);
 }
 
 .slide-1 .subtitle {
-    font-size: 26px;
+    font-size: 18px;
     font-weight: 500;
-    margin-top: 15px;
+    margin-top: 8px;
 }
 
 .subtitle, p {
-    font-size: 22px;
+    font-size: 16px;
     color: white;
-    line-height: 1.5;
+    line-height: 1.45;
     font-weight: 500;
-    max-width: 900px;
-    text-shadow: 0 2px 15px rgba(0,0,0,0.3);
-    margin-top: 10px; /* Стандартизированный отступ */
+    max-width: 100%;
+    text-shadow: 0 1px 10px rgba(0,0,0,0.3);
+    margin-top: 6px;
 }
 
 .emoji {
-    font-size: 80px;
-    margin-bottom: 20px; /* Стандартизированный отступ */
+    font-size: 60px;
+    line-height: 1.1;
+    margin-bottom: 15px;
     display: block;
 }
 
@@ -929,16 +941,17 @@ h1, h2 {
 
 .slide-image-container {
     display: flex;
-    gap: 15px;
+    gap: 10px;
     justify-content: center;
     align-items: center;
     flex-direction: row;
     flex-wrap: wrap;
-    margin: 25px 0;
+    margin: 15px 0;
     width: 100%;
     border: 2px dashed rgba(255, 255, 255, 0.15);
-    padding: 15px;
+    padding: 10px;
     transition: border-color 0.3s ease;
+    box-sizing: border-box;
 }
 
 .slide-image-container.layout-side {
@@ -966,9 +979,10 @@ h1, h2 {
 }
 
 .slide-image-container .slide-image {
-    max-width: 200px;
-    max-height: 180px;
+    max-width: 150px;
+    max-height: 120px;
     margin: 0;
+    flex-shrink: 0;
 }
 
 /* Одиночное изображение - центрируется автоматически через justify-content: center */
@@ -978,17 +992,29 @@ h1, h2 {
     display: none;
 }
 
-/* CTA (Слайд 7) */
-.slide-7 .cta {
+/* CTA кнопка */
+.cta {
     background: white;
-    color: #0f766e; /* Цвет CTA соответствует цвету фона Слайда 7 */
-    padding: 25px 60px;
-    border-radius: 50px;
-    font-size: 32px;
+    color: inherit;
+    padding: 12px 28px;
+    border-radius: 30px;
+    font-size: 16px;
     font-weight: 700;
-    margin-top: 40px;
+    margin-top: 15px;
     display: inline-block;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.slide.format-9-16 .cta {
+    padding: 8px 20px !important;
+    font-size: 13px !important;
+    margin-top: 10px !important;
+}
+
+.slide.format-4-5 .cta {
+    padding: 10px 24px;
+    font-size: 14px;
+    margin-top: 12px;
 }
 
 /* --- 9:16 Формат --- */
@@ -1019,35 +1045,28 @@ h1, h2 {
     left: 12px !important;
 }
 
-.slide.format-9-16 .slide-number {
-    bottom: 12px !important;
-    font-size: 11px !important;
-}
 
 .slide.format-9-16 .emoji {
-    font-size: 45px !important;
-    margin-bottom: 10px !important;
-    margin-top: 10px;
+    font-size: 36px !important;
+    line-height: 1.1 !important;
+    margin-bottom: 8px !important;
+    margin-top: 5px;
 }
 
 .slide.format-9-16 h1,
 .slide.format-9-16 h2 {
-    font-size: 32px !important;
-    margin-bottom: 12px !important;
+    font-size: 26px !important;
+    margin-bottom: 8px !important;
     line-height: 1.2 !important;
 }
 
 .slide.format-9-16 .subtitle,
 .slide.format-9-16 p {
-    font-size: 16px !important;
+    font-size: 13px !important;
     max-width: 100% !important;
-    line-height: 1.5 !important;
-    margin-bottom: 8px !important;
-    margin-top: 8px;
-}
-.slide.format-9-16 .slide-1 .subtitle {
-    font-size: 18px !important;
-    margin-top: 12px;
+    line-height: 1.4 !important;
+    margin-bottom: 5px !important;
+    margin-top: 5px;
 }
 
 .slide.format-9-16 .slide-image {
@@ -1096,23 +1115,17 @@ h1, h2 {
     max-height: 150px;
 }
 
-.slide.format-9-16.slide-7 .cta {
-    font-size: 16px !important; 
-    padding: 10px 25px !important;
-    margin-top: 15px !important;
-    border-radius: 25px;
-}
 
 /* --- 1:1 Формат - специальные стили для изображений --- */
 .slide.format-1-1 .slide-image-container {
-    margin: 10px 0;
-    padding: 8px;
-    gap: 8px;
-    max-width: 440px;
+    margin: 8px 0;
+    padding: 6px;
+    gap: 6px;
+    max-width: 100%;
 }
 
-.slide.format-1-1 .slide-image {
-    max-width: 100px !important;
+.slide.format-1-1 .slide-image-container .slide-image {
+    max-width: 140px !important;
     max-height: 100px !important;
 }
 
@@ -1126,15 +1139,15 @@ h1, h2 {
 
 /* --- 4:5 Формат - специальные стили для изображений --- */
 .slide.format-4-5 .slide-image-container {
-    margin: 12px 0;
-    padding: 10px;
-    gap: 10px;
-    max-width: 440px;
+    margin: 10px 0;
+    padding: 8px;
+    gap: 8px;
+    max-width: 100%;
 }
 
-.slide.format-4-5 .slide-image {
-    max-width: 110px !important;
-    max-height: 110px !important;
+.slide.format-4-5 .slide-image-container .slide-image {
+    max-width: 130px !important;
+    max-height: 95px !important;
 }
 
 /* Стили для 4:5 элементов - наследуем или переопределяем */
@@ -1144,20 +1157,21 @@ h1, h2 {
 
 .slide.format-4-5 h1,
 .slide.format-4-5 h2 {
-    font-size: 44px;
-    margin-bottom: 18px;
+    font-size: 32px;
+    margin-bottom: 10px;
     line-height: 1.15;
 }
 
 .slide.format-4-5 .subtitle,
 .slide.format-4-5 p {
-    font-size: 20px;
-    line-height: 1.45;
+    font-size: 15px;
+    line-height: 1.4;
 }
 
 .slide.format-4-5 .emoji {
-    font-size: 65px;
-    margin-bottom: 15px;
+    font-size: 50px;
+    line-height: 1.1;
+    margin-bottom: 12px;
 }
 
 /* Wrapper for preview */
@@ -1779,16 +1793,33 @@ h1, h2 {
 
 .watermark-layer {
     position: absolute;
+    bottom: 12px;
+    left: 12px;
     z-index: 9998;
     pointer-events: auto;
     user-select: none;
     white-space: nowrap;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
     cursor: pointer;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 11px;
+    font-weight: 500;
 }
 
 .watermark-layer img {
     display: block;
+}
+
+.slide.format-9-16 .watermark-layer {
+    bottom: 8px;
+    left: 8px;
+    font-size: 9px;
+}
+
+.slide.format-4-5 .watermark-layer {
+    bottom: 10px;
+    left: 10px;
+    font-size: 10px;
 }
 
 .watermark-panel {
@@ -1844,31 +1875,62 @@ input[type="color"]::-webkit-color-swatch {
     gap: 10px;
 }
 
-/* For 1:1 and 4:5 formats, hide side images */
-.slide.format-1-1.layout-side-slide .slide-image-container,
-.slide.format-4-5.layout-side-slide .slide-image-container {
-    display: none !important;
-}
-
-.slide.format-1-1.layout-side-slide,
-.slide.format-4-5.layout-side-slide {
-    flex-direction: column;
+/* For 1:1 format - show image below text instead of side */
+.slide.format-1-1.layout-side-slide {
+    flex-direction: column !important;
     align-items: center;
-    padding: 40px 30px 30px 30px;
+    gap: 10px;
 }
 
-.slide.format-1-1.layout-side-slide .slide-content-wrapper,
+.slide.format-1-1.layout-side-slide.image-right,
+.slide.format-1-1.layout-side-slide.image-left {
+    flex-direction: column !important;
+}
+
+.slide.format-1-1.layout-side-slide .slide-content-wrapper {
+    width: 100%;
+    order: 0 !important;
+}
+
+.slide.format-1-1.layout-side-slide .slide-image-container {
+    display: flex !important;
+    width: 100% !important;
+    order: 1 !important;
+    margin: 8px 0 !important;
+}
+
+.slide.format-1-1.layout-side-slide .slide-image-container .slide-image {
+    max-width: 45% !important;
+    max-height: 120px !important;
+}
+
+/* For 4:5 format - show image below text instead of side */
+.slide.format-4-5.layout-side-slide {
+    flex-direction: column !important;
+    align-items: center;
+    gap: 12px;
+}
+
+.slide.format-4-5.layout-side-slide.image-right,
+.slide.format-4-5.layout-side-slide.image-left {
+    flex-direction: column !important;
+}
+
 .slide.format-4-5.layout-side-slide .slide-content-wrapper {
     width: 100%;
-    flex: 1;
-    justify-content: center;
-    align-items: center;
-    gap: 0;
+    order: 0 !important;
 }
 
-.slide.format-1-1.layout-side-slide .slide-content-wrapper > *,
-.slide.format-4-5.layout-side-slide .slide-content-wrapper > * {
-    width: 100%;
+.slide.format-4-5.layout-side-slide .slide-image-container {
+    display: flex !important;
+    width: 100% !important;
+    order: 1 !important;
+    margin: 10px 0 !important;
+}
+
+.slide.format-4-5.layout-side-slide .slide-image-container .slide-image {
+    max-width: 50% !important;
+    max-height: 140px !important;
 }
 
 /* For 9:16 format, convert layout-side back to column */
