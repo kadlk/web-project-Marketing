@@ -466,22 +466,21 @@ function generateSlides(project) {
                     const container = slide.querySelector(`.slide-image-container[data-slide-index="${slideIndex}"]`);
                     if (container && settings) {
                         container.style.gap = settings.gap + 'px';
-                        container.style.justifyContent = settings.align || 'center';
                         container.style.flexDirection = settings.direction || 'row';
                         container.style.borderRadius = (settings.radius || 0) + 'px';
-                        
-                        // Smart Alignment Logic (Restore on Load)
-                         if (settings.direction === 'row') {
-                            container.style.justifyContent = settings.align || 'center'; 
-                            container.style.alignItems = 'center';  
-                        } else { // Column
-                            if (settings.align === 'space-between') {
-                                container.style.justifyContent = 'space-between';
-                                container.style.alignItems = 'center'; 
-                            } else {
-                                container.style.alignItems = settings.align || 'center'; 
-                                container.style.justifyContent = 'center'; 
-                            }
+                        container.style.flexWrap = settings.wrap ? 'wrap' : 'nowrap';
+
+                        if (settings.height && settings.height > 0) {
+                            container.style.minHeight = settings.height + 'px';
+                        } else {
+                            container.style.minHeight = '';
+                        }
+
+                        container.style.justifyContent = settings.align || 'center';
+                        container.style.alignItems = 'center';
+
+                        if (settings.wrap && settings.direction === 'row') {
+                            container.style.alignContent = settings.align || 'center';
                         }
 
                         const images = container.querySelectorAll('img');
@@ -489,7 +488,7 @@ function generateSlides(project) {
                             img.style.borderRadius = (settings.radius || 0) + 'px';
                             if (img.dataset.sizeKey) {
                                 const formatSizeKey = `${img.dataset.sizeKey}_${format}`;
-                                const size = imageSizes[formatSizeKey]; 
+                                const size = imageSizes[formatSizeKey];
                                 if (size) {
                                         img.style.setProperty('max-width', size + '%', 'important');
                                 }

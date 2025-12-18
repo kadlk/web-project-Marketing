@@ -54,6 +54,12 @@ function createContainerSettingsPanel() {
                             <button class="align-container-btn dir-btn" data-dir="column" title="В колонку" style="padding: 5px; font-size: 12px;">В колонку ⬇</button>
                         </div>
                     </div>
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 13px;">
+                            <input type="checkbox" id="container-wrap-checkbox" style="margin-right: 5px;">
+                            Перенос на новую строку
+                        </label>
+                    </div>
                 <div style="margin-bottom: 10px;">
                     <label style="font-size: 13px;">Отступы: <span id="container-gap-value">15</span>px</label>
                     <div style="display: flex; gap: 5px; align-items: center;">
@@ -62,11 +68,19 @@ function createContainerSettingsPanel() {
                     </div>
                 </div>
                 <div style="margin-bottom: 10px;">
-                    <label style="font-size: 13px;">Выравнивание:</label>
-                    <div style="display: flex; gap: 5px; margin: 5px 0;">
-                        <button class="align-container-btn align-btn-control" data-align="flex-start" title="По левому/верхнему краю" style="padding: 5px; font-size: 12px;">⬅/⬆</button>
+                    <label style="font-size: 13px;">Высота области: <span id="container-height-value">auto</span></label>
+                    <div style="display: flex; gap: 5px; align-items: center;">
+                        <input type="range" id="container-height-slider" min="0" max="500" value="0" style="width: 70%; margin: 5px 0;">
+                        <input type="number" id="container-height-input" min="0" max="500" value="0" placeholder="auto" style="width: 30%; padding: 4px; font-size: 12px;">
+                    </div>
+                    <p style="font-size: 10px; color: #888; margin-top: 2px;">0 = авто, иначе фиксированная высота в px</p>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <label style="font-size: 13px;" id="align-label">Выравнивание:</label>
+                    <div id="align-buttons-row" style="display: flex; gap: 5px; margin: 5px 0;">
+                        <button class="align-container-btn align-btn-control" data-align="flex-start" title="В начало" style="padding: 5px; font-size: 12px;">⬅</button>
                         <button class="align-container-btn align-btn-control" data-align="center" title="По центру" style="padding: 5px; font-size: 12px;">⬌</button>
-                        <button class="align-container-btn align-btn-control" data-align="flex-end" title="По правому/нижнему краю" style="padding: 5px; font-size: 12px;">➡/⬇</button>
+                        <button class="align-container-btn align-btn-control" data-align="flex-end" title="В конец" style="padding: 5px; font-size: 12px;">➡</button>
                         <button class="align-container-btn align-btn-control" data-align="space-between" title="Распределить" style="padding: 5px; font-size: 12px;">⬌⬌</button>
                     </div>
                 </div>
@@ -188,7 +202,12 @@ function createContainerSettingsPanel() {
     const radiusSlider = panel.querySelector('#container-radius-slider');
     const radiusInput = panel.querySelector('#container-radius-input');
     const radiusValue = panel.querySelector('#container-radius-value');
+    const heightSlider = panel.querySelector('#container-height-slider');
+    const heightInput = panel.querySelector('#container-height-input');
+    const heightValue = panel.querySelector('#container-height-value');
+    const wrapCheckbox = panel.querySelector('#container-wrap-checkbox');
     const alignButtons = panel.querySelectorAll('.align-btn-control');
+    const alignButtonsRow = panel.querySelector('#align-buttons-row');
     const dirButtons = panel.querySelectorAll('.dir-btn');
     
     // Background Tab Elements
@@ -243,6 +262,27 @@ function createContainerSettingsPanel() {
         scaleValue.textContent = scale;
         scaleSlider.value = scale;
         scaleInput.value = scale;
+    };
+
+    const updateHeightValue = (value) => {
+        const height = parseInt(value);
+        heightValue.textContent = height === 0 ? 'auto' : height + 'px';
+        heightSlider.value = height;
+        heightInput.value = height;
+    };
+
+    const updateAlignButtonIcons = (direction) => {
+        const btns = alignButtonsRow.querySelectorAll('.align-btn-control');
+        btns.forEach(btn => {
+            const align = btn.dataset.align;
+            if (direction === 'row') {
+                if (align === 'flex-start') btn.textContent = '⬅';
+                else if (align === 'flex-end') btn.textContent = '➡';
+            } else {
+                if (align === 'flex-start') btn.textContent = '⬆';
+                else if (align === 'flex-end') btn.textContent = '⬇';
+            }
+        });
     };
 
     // --- Layout Logic ---
@@ -312,20 +352,25 @@ function createContainerSettingsPanel() {
             const slide = selectedImageContainer.closest('.slide');
             const is916 = slide && slide.classList.contains('format-9-16');
             const format = is916 ? '9-16' : '1-1';
-            
+
             const slideIndex = parseInt(selectedImageContainer.dataset.slideIndex);
             const settingsKey = `container_${slideIndex}_${format}`;
-            
+
             const gap = parseInt(gapInput.value);
             const finalGap = gap < 0 ? 0 : (gap > 100 ? 100 : gap);
-            
+
             const radius = parseInt(radiusInput.value);
             const finalRadius = radius < 0 ? 0 : (radius > 50 ? 50 : radius);
-            
+
+            const height = parseInt(heightInput.value);
+            const finalHeight = height < 0 ? 0 : (height > 500 ? 500 : height);
+
+            const wrap = wrapCheckbox.checked;
+
             const align = selectedImageContainer.dataset.justifyContent || 'center';
             const direction = selectedImageContainer.dataset.direction || 'row';
 
-            console.log('[APPLY] Applying layout:', { align, direction, slideIndex });
+            console.log('[APPLY] Applying layout:', { align, direction, slideIndex, height: finalHeight, wrap });
 
             if (slideIndex !== null) {
                 const selector = is916 ? '.slide.format-9-16' : '.slide:not(.format-9-16)';
@@ -339,16 +384,19 @@ function createContainerSettingsPanel() {
                         container.style.gap = finalGap + 'px';
                         container.style.flexDirection = direction;
                         container.style.borderRadius = finalRadius + 'px';
+                        container.style.flexWrap = wrap ? 'wrap' : 'nowrap';
 
-                        // Применяем выравнивание
-                        if (direction === 'row') {
-                            container.style.justifyContent = align;
-                            container.style.alignItems = 'center';
-                            console.log('[APPLY] Row mode:', { justifyContent: align, alignItems: 'center' });
-                        } else { // column
-                            container.style.alignItems = 'center';
-                            container.style.justifyContent = align;
-                            console.log('[APPLY] Column mode:', { justifyContent: align, alignItems: 'center' });
+                        if (finalHeight > 0) {
+                            container.style.minHeight = finalHeight + 'px';
+                        } else {
+                            container.style.minHeight = '';
+                        }
+
+                        container.style.justifyContent = align;
+                        container.style.alignItems = 'center';
+
+                        if (wrap && direction === 'row') {
+                            container.style.alignContent = align;
                         }
 
                         console.log('[APPLY] Container styles:', container.style.cssText);
@@ -359,12 +407,14 @@ function createContainerSettingsPanel() {
                         });
                     }
                 });
-                
+
                 containerSettings[settingsKey] = {
                     gap: finalGap,
                     radius: finalRadius,
                     align: align,
-                    direction: direction
+                    direction: direction,
+                    height: finalHeight,
+                    wrap: wrap
                 };
             }
         }
@@ -586,14 +636,17 @@ function createContainerSettingsPanel() {
     radiusSlider.addEventListener('input', (e) => { updateRadiusValue(e.target.value); applyLayoutSettings(); });
     radiusInput.addEventListener('input', (e) => { updateRadiusValue(e.target.value); applyLayoutSettings(); });
 
+    heightSlider.addEventListener('input', (e) => { updateHeightValue(e.target.value); applyLayoutSettings(); });
+    heightInput.addEventListener('input', (e) => { updateHeightValue(e.target.value); applyLayoutSettings(); });
+
+    wrapCheckbox.addEventListener('change', () => { applyLayoutSettings(); });
+
     alignButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
             if (selectedImageContainer) {
-                 // Update active button state
                  alignButtons.forEach(b => b.classList.remove('active'));
                  btn.classList.add('active');
 
-                 // Update dataset and apply settings
                  selectedImageContainer.dataset.justifyContent = btn.dataset.align;
                  console.log('[ALIGN] Button clicked:', btn.dataset.align, 'Container:', selectedImageContainer);
                  applyLayoutSettings();
@@ -604,12 +657,11 @@ function createContainerSettingsPanel() {
     dirButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
              if (selectedImageContainer) {
-                 // Update active button state
                  dirButtons.forEach(b => b.classList.remove('active'));
                  btn.classList.add('active');
 
-                 // Update dataset and apply settings
                  selectedImageContainer.dataset.direction = btn.dataset.dir;
+                 updateAlignButtonIcons(btn.dataset.dir);
                  applyLayoutSettings();
             }
         });
@@ -819,44 +871,57 @@ function showContainerSettingsPanel(container, slideIndex, targetImage = null, s
         gap: 15,
         align: 'center',
         direction: 'row',
-        radius: 0
+        radius: 0,
+        height: 0,
+        wrap: false
     };
 
-    // Получаем текущие значения из контейнера (если он существует)
     const currentGap = container ? (parseInt(container.style.gap) || savedSettings.gap || 15) : (savedSettings.gap || 15);
     const currentAlign = container ? (container.style.justifyContent || savedSettings.align || 'center') : (savedSettings.align || 'center');
     const currentDirection = container ? (container.style.flexDirection || savedSettings.direction || 'row') : (savedSettings.direction || 'row');
     const currentRadius = container ? (parseInt(container.style.borderRadius) || savedSettings.radius || 0) : (savedSettings.radius || 0);
+    const currentHeight = container ? (parseInt(container.style.minHeight) || savedSettings.height || 0) : (savedSettings.height || 0);
+    const currentWrap = container ? (container.style.flexWrap === 'wrap') : (savedSettings.wrap || false);
 
-    // Устанавливаем dataset для правильной работы applySettings (только если контейнер существует)
     if (container) {
         container.dataset.justifyContent = currentAlign;
         container.dataset.direction = currentDirection;
     }
-    
-    // Сбрасываем флаг сохранения состояния при открытии панели
+
     if (panel._settingsStateSaved !== undefined) {
         panel._settingsStateSaved = false;
     }
-    
+
     panel.querySelector('#container-gap-slider').value = currentGap;
     panel.querySelector('#container-gap-input').value = currentGap;
     panel.querySelector('#container-gap-value').textContent = currentGap;
-    
+
     panel.querySelector('#container-radius-slider').value = currentRadius;
     panel.querySelector('#container-radius-input').value = currentRadius;
     panel.querySelector('#container-radius-value').textContent = currentRadius;
-    
-    // Активируем кнопку выравнивания
-    const alignButtons = panel.querySelectorAll('.align-btn-control');
-    alignButtons.forEach(btn => {
+
+    panel.querySelector('#container-height-slider').value = currentHeight;
+    panel.querySelector('#container-height-input').value = currentHeight;
+    panel.querySelector('#container-height-value').textContent = currentHeight === 0 ? 'auto' : currentHeight + 'px';
+
+    panel.querySelector('#container-wrap-checkbox').checked = currentWrap;
+
+    const alignButtonsRow = panel.querySelector('#align-buttons-row');
+    const alignBtns = alignButtonsRow.querySelectorAll('.align-btn-control');
+    alignBtns.forEach(btn => {
         btn.classList.remove('active');
         if (btn.dataset.align === currentAlign) {
             btn.classList.add('active');
         }
+        if (currentDirection === 'row') {
+            if (btn.dataset.align === 'flex-start') btn.textContent = '⬅';
+            else if (btn.dataset.align === 'flex-end') btn.textContent = '➡';
+        } else {
+            if (btn.dataset.align === 'flex-start') btn.textContent = '⬆';
+            else if (btn.dataset.align === 'flex-end') btn.textContent = '⬇';
+        }
     });
-    
-    // Активируем кнопку направления
+
     const dirButtons = panel.querySelectorAll('.dir-btn');
     dirButtons.forEach(btn => {
         btn.classList.remove('active');
