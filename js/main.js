@@ -387,31 +387,42 @@ function renderSlidesNav() {
     });
 }
 
+// Функция для обработки данных JSON (после парсинга)
+function applyJSONData(data) {
+    try {
+        if (data.projects && Array.isArray(data.projects)) {
+            projectsData = data.projects;
+            if (projectsData.length > 0) {
+                currentProjectId = projectsData[0].id;
+                generateSlides(projectsData[0]);
+                renderProjectsList();
+                renderSlidesNav();
+                saveToLocalStorage();
+                showNotification(`Импортировано проектов: ${projectsData.length}`, 'success');
+            }
+        } else {
+            showNotification('Неверный формат JSON. Ожидается объект с полем "projects"', 'error');
+        }
+    } catch (error) {
+        showNotification('Ошибка при обработке JSON: ' + error.message, 'error');
+        console.error(error);
+    }
+}
+
 // Функция для обработки JSON файла
 function processJSONFile(file) {
     if (!file) return;
-    
+
     if (!file.name.endsWith('.json')) {
         showNotification('Пожалуйста, выберите JSON файл', 'warning');
         return;
     }
-    
+
     const reader = new FileReader();
     reader.onload = (event) => {
         try {
             const data = JSON.parse(event.target.result);
-            if (data.projects && Array.isArray(data.projects)) {
-                projectsData = data.projects;
-                if (projectsData.length > 0) {
-                    currentProjectId = projectsData[0].id;
-                    generateSlides(projectsData[0]);
-                    renderProjectsList();
-                    saveToLocalStorage(); // Сохраняем при импорте
-                    showNotification(`Импортировано проектов: ${projectsData.length}`, 'success');
-                }
-            } else {
-                showNotification('Неверный формат JSON. Ожидается объект с полем "projects"', 'error');
-            }
+            applyJSONData(data);
         } catch (error) {
             showNotification('Ошибка при парсинге JSON: ' + error.message, 'error');
             console.error(error);
@@ -425,41 +436,59 @@ function initImportJSON() {
     const importBtn = document.getElementById('import-json-btn');
     const importInput = document.getElementById('import-json-input');
     const importArea = document.getElementById('import-json-area');
-    
+    const jsonTextInput = document.getElementById('json-text-input');
+
     if (!importBtn || !importInput || !importArea) {
         console.error('Элементы импорта JSON не найдены');
         return;
     }
-    
+
     // Клик по кнопке
     importBtn.addEventListener('click', () => {
         importInput.click();
     });
-    
+
     // Выбор файла через input
     importInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         processJSONFile(file);
     });
-    
+
+    // Обработка текстового ввода
+    if (jsonTextInput) {
+        jsonTextInput.addEventListener('blur', () => {
+            const text = jsonTextInput.value.trim();
+            if (text) {
+                try {
+                    const data = JSON.parse(text);
+                    applyJSONData(data);
+                    jsonTextInput.value = ''; // Очищаем поле после успешной загрузки
+                } catch (error) {
+                    showNotification('Ошибка при парсинге JSON текста: ' + error.message, 'error');
+                    console.error(error);
+                }
+            }
+        });
+    }
+
     // Drag and Drop
     importArea.addEventListener('dragover', (e) => {
         e.preventDefault();
         e.stopPropagation();
         importArea.classList.add('drag-over');
     });
-    
+
     importArea.addEventListener('dragleave', (e) => {
         e.preventDefault();
         e.stopPropagation();
         importArea.classList.remove('drag-over');
     });
-    
+
     importArea.addEventListener('drop', (e) => {
         e.preventDefault();
         e.stopPropagation();
         importArea.classList.remove('drag-over');
-        
+
         const files = e.dataTransfer.files;
         if (files.length > 0) {
             processJSONFile(files[0]);
@@ -806,20 +835,15 @@ function initEditJSON() {
                 return; // Невалидный JSON, не применяем
             }
 
-            const newProject = data.projects[0];
-            const projectIndex = projectsData.findIndex(p => p.id === currentProjectId);
-
-            if (projectIndex !== -1) {
-                projectsData[projectIndex] = newProject;
-                currentProjectId = newProject.id;
-            } else {
-                projectsData.push(newProject);
-                currentProjectId = newProject.id;
-            }
+            // Загружаем ВСЕ проекты для live preview
+            projectsData = data.projects;
+            currentProjectId = projectsData[0].id;
 
             // Перегенерируем слайды БЕЗ сохранения в localStorage (только preview)
-            generateSlides(newProject);
-            errorMessage.textContent = '✓ Live preview обновлён';
+            generateSlides(projectsData[0]);
+            renderProjectsList();
+            renderSlidesNav();
+            errorMessage.textContent = `✓ Live preview обновлён (${projectsData.length} проектов)`;
             errorMessage.style.color = '#50fa7b';
 
         } catch (error) {
@@ -995,27 +1019,19 @@ function initEditJSON() {
                 throw new Error('JSON должен содержать массив "projects" с хотя бы одним проектом');
             }
 
-            // Заменяем текущий проект на отредактированный
-            const newProject = data.projects[0];
-            const projectIndex = projectsData.findIndex(p => p.id === currentProjectId);
-
-            if (projectIndex !== -1) {
-                projectsData[projectIndex] = newProject;
-                currentProjectId = newProject.id;
-            } else {
-                projectsData.push(newProject);
-                currentProjectId = newProject.id;
-            }
+            // Заменяем ВСЕ проекты на загруженные из JSON
+            projectsData = data.projects;
+            currentProjectId = projectsData[0].id;
 
             // Сохраняем и перегенерируем
             saveToLocalStorage();
-            generateSlides(newProject);
+            generateSlides(projectsData[0]);
             renderProjectsList();
             renderSlidesNav();
 
             // Закрываем панель
             closeEditor();
-            showNotification('✓ JSON сохранён в localStorage!', 'success');
+            showNotification(`✓ Загружено проектов: ${projectsData.length}`, 'success');
 
         } catch (error) {
             errorMessage.textContent = `❌ Ошибка: ${error.message}`;
