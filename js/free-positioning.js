@@ -1,79 +1,125 @@
 // Свободное позиционирование изображений с использованием interact.js
+// ПОЛНОСТЬЮ ПЕРЕРАБОТАННАЯ АРХИТЕКТУРА: Изображения удаляются из flex контейнера
+// и помещаются в независимый слой позиционирования на уровне слайда
+
 // Хранилище позиций и размеров изображений
 const imagePositions = {};
 const imageScales = {};
+const freePositioningLayers = {}; // Хранилище слоев позиционирования
 
-// Включить режим свободного позиционирования для изображения
-function enableFreePositioning(imageWrapper, slideIndex) {
-    const img = imageWrapper.querySelector('img');
-    const sizeKey = img?.dataset.sizeKey;
-    if (!sizeKey) return;
+// Включить режим свободного позиционирования для всех изображений на слайде
+function enableFreePositioning(slideIndex) {
+    const allSlides = document.querySelectorAll(`.slide[data-slide-index="${slideIndex}"]`);
 
-    const slide = imageWrapper.closest('.slide');
-    if (!slide) return;
+    allSlides.forEach(slide => {
+        // Создаем независимый слой позиционирования на уровне слайда
+        let freePositioningLayer = slide.querySelector('.free-positioning-layer');
+        if (!freePositioningLayer) {
+            freePositioningLayer = document.createElement('div');
+            freePositioningLayer.className = 'free-positioning-layer';
+            freePositioningLayer.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                z-index: 200;
+            `;
+            // Вставляем слой после контента, но перед логотипом/водяным знаком
+            const contentWrapper = slide.querySelector('.slide-content-wrapper');
+            if (contentWrapper) {
+                contentWrapper.parentNode.insertBefore(freePositioningLayer, contentWrapper.nextSibling);
+            } else {
+                slide.appendChild(freePositioningLayer);
+            }
+        }
 
-    // Делаем обёртку абсолютно позиционируемой
-    imageWrapper.style.position = 'absolute';
-    imageWrapper.style.zIndex = '50'; // Base z-index so images appear above content
-    imageWrapper.style.pointerEvents = 'auto'; // Ensure images can be dragged
-    imageWrapper.classList.add('free-positioning-active');
+        const container = slide.querySelector('.slide-image-container');
+        if (!container) return;
 
-    // Загружаем сохранённые координаты и масштаб
-    const posKey = `${slideIndex}_${sizeKey}`;
-    const scaleKey = `${slideIndex}_${sizeKey}_scale`;
+        const imageWrappers = Array.from(container.querySelectorAll('.uploaded-image-wrapper'));
 
-    // Сохраняем исходные размеры (100% от размера картинки)
-    const originalWidth = imageWrapper.offsetWidth;
-    const originalHeight = imageWrapper.offsetHeight;
+        imageWrappers.forEach(wrapper => {
+            const img = wrapper.querySelector('img');
+            const sizeKey = img?.dataset.sizeKey;
+            if (!sizeKey) return;
 
-    imageWrapper.dataset.originalWidth = originalWidth;
-    imageWrapper.dataset.originalHeight = originalHeight;
+            // КЛЮЧЕВОЙ ШАГ: Клонируем обёртку и добавляем в слой позиционирования
+            const clonedWrapper = wrapper.cloneNode(true);
+            clonedWrapper.className = 'free-positioned-image';
+            clonedWrapper.style.cssText = `
+                position: absolute;
+                pointer-events: auto;
+                z-index: 50;
+                cursor: grab;
+            `;
 
-    // Инициализируем координаты и масштаб
-    const savedScale = imageScales[scaleKey] || 1;
-    let x = 0;
-    let y = 0;
+            // Загружаем сохранённую позицию и масштаб
+            const posKey = `${slideIndex}_${sizeKey}`;
+            const scaleKey = `${slideIndex}_${sizeKey}_scale`;
+            const savedScale = imageScales[scaleKey] || 1;
 
-    // Вычисляем итоговые размеры с учетом scale для центрирования
-    const visualWidth = originalWidth * savedScale;
-    const visualHeight = originalHeight * savedScale;
+            // Получаем размеры из клонированного элемента
+            const originalWidth = wrapper.offsetWidth;
+            const originalHeight = wrapper.offsetHeight;
 
-    if (imagePositions[posKey]) {
-        // Загружаем сохранённую позицию
-        x = imagePositions[posKey].x;
-        y = imagePositions[posKey].y;
-    } else {
-        // Центрируем по умолчанию с учетом визуальных размеров после scale
-        const slideRect = slide.getBoundingClientRect();
-        x = (slideRect.width - visualWidth) / 2;
-        y = (slideRect.height - visualHeight) / 2;
-        imagePositions[posKey] = { x, y };
-    }
+            clonedWrapper.dataset.originalWidth = originalWidth;
+            clonedWrapper.dataset.originalHeight = originalHeight;
+            clonedWrapper.dataset.slideIndex = slideIndex;
+            clonedWrapper.dataset.sizeKey = sizeKey;
 
-    // Устанавливаем позицию через left/top
-    imageWrapper.style.left = x + 'px';
-    imageWrapper.style.top = y + 'px';
+            // Устанавливаем позицию и масштаб
+            const visualWidth = originalWidth * savedScale;
+            const visualHeight = originalHeight * savedScale;
 
-    // Применяем scale через transform
-    imageWrapper.style.transform = `scale(${savedScale})`;
-    imageWrapper.style.transformOrigin = '0 0';
+            let x, y;
+            if (imagePositions[posKey]) {
+                x = imagePositions[posKey].x;
+                y = imagePositions[posKey].y;
+            } else {
+                // Центрируем по умолчанию
+                const slideRect = slide.getBoundingClientRect();
+                const slideComputedStyle = window.getComputedStyle(slide);
+                const slideRelativeX = slide.offsetLeft;
+                const slideRelativeY = slide.offsetTop;
 
-    // Отключаем Sortable если был активирован
-    imageWrapper.draggable = false;
+                x = (slide.offsetWidth - visualWidth) / 2;
+                y = (slide.offsetHeight - visualHeight) / 2;
+                imagePositions[posKey] = { x, y };
+            }
 
-    // Инициализируем interact.js для этого элемента
-    setupInteractJS(imageWrapper, slideIndex, sizeKey);
+            clonedWrapper.style.left = x + 'px';
+            clonedWrapper.style.top = y + 'px';
+            clonedWrapper.style.transform = `scale(${savedScale})`;
+            clonedWrapper.style.transformOrigin = '0 0';
+            clonedWrapper.style.width = originalWidth + 'px';
+            clonedWrapper.style.height = originalHeight + 'px';
+
+            // Добавляем в слой позиционирования
+            freePositioningLayer.appendChild(clonedWrapper);
+
+            // Инициализируем interact.js для свободного перетаскивания
+            setupFreePositioningInteract(clonedWrapper, slideIndex, sizeKey, slide);
+
+            // Скрываем оригинальную обёртку в контейнере
+            wrapper.style.display = 'none';
+        });
+
+        // Сохраняем ссылку на слой
+        const layerKey = `layer_${slideIndex}`;
+        freePositioningLayers[layerKey] = freePositioningLayer;
+    });
 }
 
-// Настройка interact.js для элемента
-function setupInteractJS(imageWrapper, slideIndex, sizeKey) {
-    const slide = imageWrapper.closest('.slide');
-    if (!slide) return;
-
+// НОВАЯ ФУНКЦИЯ: Настройка interact.js для свободного позиционирования
+// БЕЗ ОГРАНИЧЕНИЙ на движение и перетаскивание за границы слайда
+function setupFreePositioningInteract(imageWrapper, slideIndex, sizeKey, slide) {
     const posKey = `${slideIndex}_${sizeKey}`;
     const scaleKey = `${slideIndex}_${sizeKey}_scale`;
 
-    // Настройка перетаскивания и изменения размера
+    // КЛЮЧЕВАЯ РАЗНИЦА: Нет никаких modifiers/restriction
+    // Элемент может двигаться абсолютно свободно
     interact(imageWrapper)
         .draggable({
             inertia: false,
@@ -81,6 +127,7 @@ function setupInteractJS(imageWrapper, slideIndex, sizeKey) {
                 start(event) {
                     imageWrapper.style.opacity = '0.8';
                     imageWrapper.style.zIndex = '1000';
+                    imageWrapper.style.cursor = 'grabbing';
                     imageWrapper.classList.add('dragging');
 
                     // Показываем направляющие при зажатом Shift
@@ -99,26 +146,27 @@ function setupInteractJS(imageWrapper, slideIndex, sizeKey) {
                     if (event.shiftKey) {
                         showCenterGuide(slide);
 
-                        const slideRect = slide.getBoundingClientRect();
-                        const wrapperRect = target.getBoundingClientRect();
+                        const slideWidth = slide.offsetWidth;
+                        const slideHeight = slide.offsetHeight;
+                        const wrapperWidth = imageWrapper.offsetWidth;
+                        const wrapperHeight = imageWrapper.offsetHeight;
+
                         const slideCenter = {
-                            x: slideRect.width / 2,
-                            y: slideRect.height / 2
+                            x: (slideWidth - wrapperWidth) / 2,
+                            y: (slideHeight - wrapperHeight) / 2
                         };
 
                         const snapThreshold = 30;
 
                         // Snap по X
-                        const targetCenterX = slideCenter.x - wrapperRect.width / 2;
-                        if (Math.abs(x - targetCenterX) < snapThreshold) {
-                            x = targetCenterX;
+                        if (Math.abs(x - slideCenter.x) < snapThreshold) {
+                            x = slideCenter.x;
                             isSnapped = true;
                         }
 
                         // Snap по Y
-                        const targetCenterY = slideCenter.y - wrapperRect.height / 2;
-                        if (Math.abs(y - targetCenterY) < snapThreshold) {
-                            y = targetCenterY;
+                        if (Math.abs(y - slideCenter.y) < snapThreshold) {
+                            y = slideCenter.y;
                             isSnapped = true;
                         }
                     } else {
@@ -137,7 +185,8 @@ function setupInteractJS(imageWrapper, slideIndex, sizeKey) {
                 },
                 end(event) {
                     imageWrapper.style.opacity = '1';
-                    imageWrapper.style.zIndex = '';
+                    imageWrapper.style.zIndex = '50';
+                    imageWrapper.style.cursor = 'grab';
                     imageWrapper.style.boxShadow = '';
                     imageWrapper.classList.remove('dragging');
 
@@ -201,6 +250,15 @@ function setupInteractJS(imageWrapper, slideIndex, sizeKey) {
 
     // Добавляем визуальные ручки для resize
     addVisualResizeHandles(imageWrapper);
+}
+
+// Оставляем старую функцию для обратной совместимости
+function setupInteractJS(imageWrapper, slideIndex, sizeKey) {
+    const slide = imageWrapper.closest('.slide');
+    if (!slide) return;
+
+    // Перенаправляем на новую функцию
+    setupFreePositioningInteract(imageWrapper, slideIndex, sizeKey, slide);
 }
 
 // Добавление визуальных ручек для изменения размера
@@ -316,10 +374,14 @@ function syncPositionAcrossFormats(slideIndex, sizeKey, x, y) {
     const allSlides = document.querySelectorAll(`.slide[data-slide-index="${slideIndex}"]`);
 
     allSlides.forEach(slide => {
-        const wrapper = slide.querySelector(`.uploaded-image-wrapper img[data-size-key="${sizeKey}"]`)?.closest('.uploaded-image-wrapper');
-        if (wrapper && wrapper.classList.contains('free-positioning-active')) {
-            wrapper.style.left = x + 'px';
-            wrapper.style.top = y + 'px';
+        // Ищем элемент в слое свободного позиционирования
+        const freePositioningLayer = slide.querySelector('.free-positioning-layer');
+        if (freePositioningLayer) {
+            const wrapper = freePositioningLayer.querySelector(`.free-positioned-image img[data-size-key="${sizeKey}"]`)?.closest('.free-positioned-image');
+            if (wrapper) {
+                wrapper.style.left = x + 'px';
+                wrapper.style.top = y + 'px';
+            }
         }
     });
 }
@@ -331,19 +393,23 @@ function syncScaleAcrossFormats(slideIndex, sizeKey, scale) {
     imageScales[scaleKey] = scale;
 
     allSlides.forEach(slide => {
-        const wrapper = slide.querySelector(`.uploaded-image-wrapper img[data-size-key="${sizeKey}"]`)?.closest('.uploaded-image-wrapper');
-        if (wrapper && wrapper.classList.contains('free-positioning-active')) {
-            // Применяем scale через transform
-            wrapper.style.transform = `scale(${scale})`;
-            wrapper.style.transformOrigin = '0 0';
+        // Ищем элемент в слое свободного позиционирования
+        const freePositioningLayer = slide.querySelector('.free-positioning-layer');
+        if (freePositioningLayer) {
+            const wrapper = freePositioningLayer.querySelector(`.free-positioned-image img[data-size-key="${sizeKey}"]`)?.closest('.free-positioned-image');
+            if (wrapper) {
+                // Применяем scale через transform
+                wrapper.style.transform = `scale(${scale})`;
+                wrapper.style.transformOrigin = '0 0';
 
-            // Обновляем визуальные размеры в dataset
-            const originalWidth = parseFloat(wrapper.dataset.originalWidth);
-            const originalHeight = parseFloat(wrapper.dataset.originalHeight);
+                // Обновляем визуальные размеры в dataset
+                const originalWidth = parseFloat(wrapper.dataset.originalWidth);
+                const originalHeight = parseFloat(wrapper.dataset.originalHeight);
 
-            if (originalWidth && originalHeight) {
-                wrapper.dataset.visualWidth = originalWidth * scale;
-                wrapper.dataset.visualHeight = originalHeight * scale;
+                if (originalWidth && originalHeight) {
+                    wrapper.dataset.visualWidth = originalWidth * scale;
+                    wrapper.dataset.visualHeight = originalHeight * scale;
+                }
             }
         }
     });
@@ -374,7 +440,8 @@ function disableFreePositioning(imageWrapper) {
     delete imageWrapper.dataset.originalHeight;
 }
 
-// Переключение режима для всех изображений на слайде
+// НОВАЯ ФУНКЦИЯ: Переключение режима свободного позиционирования
+// Использует независимый слой позиционирования вместо переопределения стилей контейнера
 function toggleFreePositioningMode(slideIndex, enable) {
     const allSlides = document.querySelectorAll(`.slide[data-slide-index="${slideIndex}"]`);
 
@@ -383,141 +450,51 @@ function toggleFreePositioningMode(slideIndex, enable) {
         const wrappers = slide.querySelectorAll('.uploaded-image-wrapper');
 
         if (enable) {
-            // Включаем режим свободного позиционирования
-            if (container) {
-                container.style.border = 'none !important';
-                container.style.padding = '0 !important';
-                container.style.margin = '0 !important';
-                container.style.display = 'block !important';
-                container.style.position = 'absolute !important';
-                container.style.top = '0 !important';
-                container.style.left = '0 !important';
-                container.style.right = '0 !important';
-                container.style.bottom = '0 !important';
-                container.style.height = '100% !important';
-                container.style.width = '100% !important';
-                container.style.zIndex = '100 !important';
-                container.style.pointerEvents = 'auto !important';
-                container.style.overflow = 'visible !important';
-                container.style.flexDirection = 'column !important';
-                container.style.flexWrap = 'nowrap !important';
-                container.style.justifyContent = 'unset !important';
-                container.style.alignItems = 'unset !important';
-                container.style.gap = '0 !important';
-                // Container overlays the entire slide to allow free positioning
-                // Images can move freely without being constrained by flex layout
-            }
+            // ВКЛЮЧАЕМ свободное позиционирование
+            // Используем новую архитектуру с независимым слоем
+            enableFreePositioning(slideIndex);
 
-            // Центрируем группу изображений как единое целое
-            if (wrappers.length > 1) {
-                centerImageGroup(wrappers, slide, slideIndex);
-            } else {
-                wrappers.forEach(wrapper => {
-                    enableFreePositioning(wrapper, slideIndex);
-                });
+            // Скрываем оригинальный контейнер или скрываем контейнер визуально
+            if (container) {
+                container.style.visibility = 'hidden';
+                container.style.pointerEvents = 'none';
+                container.style.height = '0';
+                container.style.margin = '0';
+                container.style.padding = '0';
             }
         } else {
-            // Отключаем режим
+            // ОТКЛЮЧАЕМ свободное позиционирование
+            // Восстанавливаем контейнер и удаляем слой позиционирования
+            const layerKey = `layer_${slideIndex}`;
+            const freePositioningLayer = freePositioningLayers[layerKey];
+
+            if (freePositioningLayer) {
+                freePositioningLayer.remove();
+                delete freePositioningLayers[layerKey];
+            }
+
+            // Восстанавливаем видимость контейнера
             if (container) {
-                // Полностью очищаем все стили для восстановления flex режима
-                container.style.cssText = '';
-                // Восстанавливаем flex layout
-                container.style.display = 'flex';
-                container.style.gap = '10px';
-                container.style.justifyContent = 'center';
-                container.style.alignItems = 'center';
-                container.style.flexDirection = 'row';
-                container.style.flexWrap = 'wrap';
+                container.style.visibility = 'visible';
+                container.style.pointerEvents = 'auto';
+                container.style.height = 'auto';
                 container.style.margin = '15px 0';
-                container.style.width = '100%';
-                container.style.border = '2px dashed rgba(255, 255, 255, 0.15)';
                 container.style.padding = '10px';
             }
 
+            // Восстанавливаем видимость обёрток
             wrappers.forEach(wrapper => {
-                disableFreePositioning(wrapper);
+                wrapper.style.display = '';
+                // Отключаем interact.js
+                interact(wrapper).unset();
+                // Удаляем ручки resize
+                wrapper.querySelectorAll('.resize-handle').forEach(h => h.remove());
             });
         }
     });
 }
 
-// Центрировать группу изображений
-function centerImageGroup(wrappers, slide, slideIndex) {
-    const slideRect = slide.getBoundingClientRect();
-    const gap = 15; // Промежуток между изображениями
-
-    // Сначала активируем все изображения чтобы получить их размеры
-    wrappers.forEach(wrapper => {
-        const img = wrapper.querySelector('img');
-        const sizeKey = img?.dataset.sizeKey;
-        if (!sizeKey) return;
-
-        const scaleKey = `${slideIndex}_${sizeKey}_scale`;
-        const savedScale = imageScales[scaleKey] || 1;
-
-        wrapper.style.position = 'absolute';
-        wrapper.style.zIndex = '50'; // Base z-index so images appear above content
-        wrapper.classList.add('free-positioning-active');
-
-        const originalWidth = wrapper.offsetWidth;
-        const originalHeight = wrapper.offsetHeight;
-
-        wrapper.dataset.originalWidth = originalWidth;
-        wrapper.dataset.originalHeight = originalHeight;
-        wrapper.dataset.visualWidth = originalWidth * savedScale;
-        wrapper.dataset.visualHeight = originalHeight * savedScale;
-
-        wrapper.style.transform = `scale(${savedScale})`;
-        wrapper.style.transformOrigin = '0 0';
-        wrapper.draggable = false;
-    });
-
-    // Вычисляем общую ширину группы
-    let totalWidth = 0;
-    let maxHeight = 0;
-
-    wrappers.forEach(wrapper => {
-        const visualWidth = parseFloat(wrapper.dataset.visualWidth);
-        const visualHeight = parseFloat(wrapper.dataset.visualHeight);
-        totalWidth += visualWidth;
-        maxHeight = Math.max(maxHeight, visualHeight);
-    });
-
-    totalWidth += gap * (wrappers.length - 1);
-
-    // Начальная позиция для центрирования группы
-    let startX = (slideRect.width - totalWidth) / 2;
-    const startY = (slideRect.height - maxHeight) / 2;
-
-    // Размещаем изображения по горизонтали
-    wrappers.forEach(wrapper => {
-        const img = wrapper.querySelector('img');
-        const sizeKey = img?.dataset.sizeKey;
-        if (!sizeKey) return;
-
-        const posKey = `${slideIndex}_${sizeKey}`;
-        const visualWidth = parseFloat(wrapper.dataset.visualWidth);
-
-        // Проверяем сохранённую позицию
-        if (!imagePositions[posKey]) {
-            const x = startX;
-            const y = startY;
-
-            wrapper.style.left = x + 'px';
-            wrapper.style.top = y + 'px';
-
-            imagePositions[posKey] = { x, y };
-            startX += visualWidth + gap;
-        } else {
-            // Используем сохранённую позицию
-            wrapper.style.left = imagePositions[posKey].x + 'px';
-            wrapper.style.top = imagePositions[posKey].y + 'px';
-        }
-
-        // Настраиваем interact.js
-        setupInteractJS(wrapper, slideIndex, sizeKey);
-    });
-}
+// Старая функция centerImageGroup удалена - используется новая архитектура с независимым слоем позиционирования
 
 // Сохранение позиций в localStorage
 function saveImagePositions() {
