@@ -1961,3 +1961,22 @@ input[type="color"]::-webkit-color-swatch {
     width: 100%;
     margin: 8px 0 !important;
 }
+
+/* Layers panel drag-and-drop styles */
+.layer-item {
+    touch-action: none;
+    user-select: none;
+}
+
+.layer-dragging {
+    opacity: 0.5 !important;
+    background: rgba(59, 130, 246, 0.2) !important;
+    border: 2px dashed rgba(59, 130, 246, 0.6) !important;
+    transform: scale(0.98);
+}
+
+.layer-ghost {
+    opacity: 0.4;
+    background: rgba(59, 130, 246, 0.1) !important;
+    border: 1px dashed rgba(59, 130, 246, 0.4) !important;
+}

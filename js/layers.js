@@ -66,7 +66,7 @@ function renderLayersPanel() {
 
     // Показываем панель когда есть элементы
     if (layersPanel) layersPanel.style.display = 'block';
-    
+
     // Create a mapping of displayed index to actual element
     // We reverse for display, but track the actual element reference
     const displayedElements = [...elements].reverse();
@@ -237,7 +237,82 @@ function renderLayersPanel() {
             }
         });
         
+        layerItem.setAttribute('data-element-id', elements.indexOf(element));
         layersList.appendChild(layerItem);
+    });
+
+    // Initialize Sortable for drag-and-drop reordering
+    initLayersDragDrop(layersList, elements, activeSlides);
+}
+
+// Initialize drag-and-drop functionality for layers
+function initLayersDragDrop(layersList, elements, activeSlides) {
+    if (typeof Sortable === 'undefined') {
+        console.warn('Sortable.js not loaded');
+        return;
+    }
+
+    Sortable.create(layersList, {
+        animation: 150,
+        ghostClass: 'layer-ghost',
+        dragClass: 'layer-dragging',
+        onEnd: (evt) => {
+            // Get the element that was moved
+            const draggedLayerItem = evt.item;
+            const draggedElementId = parseInt(draggedLayerItem.getAttribute('data-element-id'));
+            const draggedElement = elements[draggedElementId];
+
+            if (!draggedElement) {
+                console.warn('Element not found');
+                return;
+            }
+
+            // Calculate the new position based on displayed order
+            // The layers list is reversed for display, so we need to account for that
+            const allLayerItems = Array.from(layersList.children);
+            const newDisplayIndex = allLayerItems.indexOf(draggedLayerItem);
+
+            // Convert display index to actual DOM index
+            // Since we reverse for display, actual index = (total - 1) - displayIndex
+            const actualIndex = (elements.length - 1) - newDisplayIndex;
+
+            console.log('Dragged element ID:', draggedElementId);
+            console.log('New display index:', newDisplayIndex);
+            console.log('New actual index:', actualIndex);
+
+            // Apply to all slide formats
+            activeSlides.forEach(slideEl => {
+                const wrapper = slideEl.querySelector('.slide-content-wrapper') || slideEl;
+                const allElements = Array.from(wrapper.children).filter(el => {
+                    return !el.classList.contains('slide-number') &&
+                           !el.classList.contains('watermark-layer') &&
+                           !el.classList.contains('logo') &&
+                           !el.classList.contains('active-slide-label');
+                });
+
+                // Find the element in this slide
+                const elementIndex = allElements.indexOf(draggedElement);
+
+                if (elementIndex !== -1 && elementIndex !== actualIndex) {
+                    // Remove element from current position
+                    const movedElement = allElements[elementIndex];
+                    movedElement.parentNode.removeChild(movedElement);
+
+                    // Insert at new position
+                    if (actualIndex >= allElements.length - 1) {
+                        // Insert at the end
+                        wrapper.appendChild(movedElement);
+                    } else {
+                        // Insert before the element at actualIndex
+                        wrapper.insertBefore(movedElement, allElements[actualIndex]);
+                    }
+                }
+            });
+
+            // Re-render to update layer items and element references
+            renderLayersPanel();
+            saveToLocalStorage();
+        }
     });
 }
 
