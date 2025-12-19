@@ -15,6 +15,7 @@ function enableFreePositioning(imageWrapper, slideIndex) {
     // Делаем обёртку абсолютно позиционируемой
     imageWrapper.style.position = 'absolute';
     imageWrapper.style.zIndex = '50'; // Base z-index so images appear above content
+    imageWrapper.style.pointerEvents = 'auto'; // Ensure images can be dragged
     imageWrapper.classList.add('free-positioning-active');
 
     // Загружаем сохранённые координаты и масштаб
