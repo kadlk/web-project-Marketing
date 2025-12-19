@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initTextEditing();
     initAddElements();
     initWatermarkButton();
+    initKeyboardShortcuts();
 });
 
 function initWatermarkButton() {
@@ -46,6 +47,39 @@ function initWatermarkButton() {
             }
         });
     }
+}
+
+function initKeyboardShortcuts() {
+    document.addEventListener('keydown', (e) => {
+        // Проверяем, активен ли CodeMirror редактор (не должны работать в редакторе)
+        const isCodeMirrorActive = document.querySelector('.CodeMirror-focused');
+        if (isCodeMirrorActive) return;
+
+        // Проверяем, редактируется ли текст
+        const isTextEditing = document.activeElement.contentEditable === 'true' ||
+                             document.activeElement.tagName === 'TEXTAREA' ||
+                             document.activeElement.tagName === 'INPUT';
+
+        if (isTextEditing && e.key !== 'z' && e.key !== 'Z') return;
+
+        // Cmd+Z или Ctrl+Z для отмены
+        if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !e.shiftKey) {
+            e.preventDefault();
+            undo();
+        }
+
+        // Cmd+Shift+Z или Ctrl+Shift+Z для повтора
+        if ((e.metaKey || e.ctrlKey) && e.key === 'z' && e.shiftKey) {
+            e.preventDefault();
+            redo();
+        }
+
+        // Cmd+Y или Ctrl+Y для повтора (альтернативный способ)
+        if ((e.metaKey || e.ctrlKey) && e.key === 'y') {
+            e.preventDefault();
+            redo();
+        }
+    });
 }
 
 // Глобальная переменная для отслеживания активного слайда
