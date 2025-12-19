@@ -55,6 +55,25 @@ function updateImagePreview(preview, slideIndex, slideElement, additionalSlides)
             imgPreview.style.objectFit = 'cover';
             imgPreview.style.borderRadius = '4px';
             
+            const replaceBtn = document.createElement('button');
+            replaceBtn.textContent = '🔄';
+            replaceBtn.style.background = '#3b82f6';
+            replaceBtn.style.color = 'white';
+            replaceBtn.style.border = 'none';
+            replaceBtn.style.borderRadius = '4px';
+            replaceBtn.style.width = '24px';
+            replaceBtn.style.height = '24px';
+            replaceBtn.style.cursor = 'pointer';
+            replaceBtn.style.flexShrink = '0';
+            replaceBtn.style.fontSize = '12px';
+            replaceBtn.style.marginLeft = '4px';
+            replaceBtn.title = 'Заменить изображение';
+
+            replaceBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                replaceImageWithUpload(img, slideIndex, img.closest('.uploaded-image-wrapper'));
+            });
+
             const deleteBtn = document.createElement('button');
             deleteBtn.textContent = '×';
             deleteBtn.style.background = '#ef4444';
@@ -66,7 +85,7 @@ function updateImagePreview(preview, slideIndex, slideElement, additionalSlides)
             deleteBtn.style.cursor = 'pointer';
             deleteBtn.style.flexShrink = '0';
             deleteBtn.title = 'Удалить изображение';
-            
+
             deleteBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 saveStateForUndo();
@@ -102,8 +121,16 @@ function updateImagePreview(preview, slideIndex, slideElement, additionalSlides)
                 updateImagePreview(preview, slideIndex, slideElement, additionalSlides);
             });
             
+            const buttonContainer = document.createElement('div');
+            buttonContainer.style.display = 'flex';
+            buttonContainer.style.gap = '4px';
+            buttonContainer.style.flexShrink = '0';
+
+            buttonContainer.appendChild(replaceBtn);
+            buttonContainer.appendChild(deleteBtn);
+
             imageItem.appendChild(imgPreview);
-            imageItem.appendChild(deleteBtn);
+            imageItem.appendChild(buttonContainer);
             imageList.appendChild(imageItem);
         });
     }
@@ -161,16 +188,28 @@ function createImageContextMenu(img, imageWrapper, deleteBtn, slideIndex) {
     const contextMenu = document.createElement('div');
     contextMenu.className = 'image-context-menu';
     contextMenu.innerHTML = `
-        <button class="menu-btn delete-btn">🗑️ Удалить</button>
+        <button class="menu-btn replace-btn">🔄 Заменить</button>
         <button class="menu-btn size-btn">📏 Изменить размер</button>
         <button class="menu-btn gap-btn">⚙️ Настройки контейнера</button>
+        <button class="menu-btn delete-btn">🗑️ Удалить</button>
     `;
     contextMenu.style.display = 'none';
-    
+
     // Показываем меню при клике на изображение
     img.addEventListener('click', (e) => {
         e.stopPropagation();
         e.preventDefault();
+
+        // Убираем selected класс со всех остальных изображений
+        document.querySelectorAll('.uploaded-image-wrapper.selected').forEach(wrapper => {
+            if (wrapper !== imageWrapper) {
+                wrapper.classList.remove('selected');
+            }
+        });
+
+        // Добавляем selected класс текущему изображению
+        imageWrapper.classList.add('selected');
+
         // Закрываем другие меню и панели
         document.querySelectorAll('.image-context-menu').forEach(menu => {
             if (menu !== contextMenu) menu.style.display = 'none';
@@ -178,14 +217,14 @@ function createImageContextMenu(img, imageWrapper, deleteBtn, slideIndex) {
         document.querySelectorAll('.text-edit-panel').forEach(panel => {
             panel.style.display = 'none';
         });
-        
+
         // Переключаем видимость меню
         if (contextMenu.style.display === 'none') {
             contextMenu.style.display = 'block';
             const rect = img.getBoundingClientRect();
             contextMenu.style.top = rect.top + 'px';
             contextMenu.style.left = (rect.right + 10) + 'px';
-            
+
             // Если меню выходит за правый край, показываем слева
             if (rect.right + 200 > window.innerWidth) {
                 contextMenu.style.left = (rect.left - 190) + 'px';
@@ -194,20 +233,27 @@ function createImageContextMenu(img, imageWrapper, deleteBtn, slideIndex) {
             contextMenu.style.display = 'none';
         }
     });
-    
+
+    // Кнопка замены изображения
+    contextMenu.querySelector('.replace-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        contextMenu.style.display = 'none';
+        replaceImageWithUpload(img, slideIndex, imageWrapper);
+    });
+
     // Кнопки меню
     contextMenu.querySelector('.delete-btn').addEventListener('click', (e) => {
         e.stopPropagation();
         contextMenu.style.display = 'none';
         deleteBtn.click();
     });
-    
+
     contextMenu.querySelector('.size-btn').addEventListener('click', (e) => {
         e.stopPropagation();
         contextMenu.style.display = 'none';
         showSizeControlPanel(img, slideIndex);
     });
-    
+
     contextMenu.querySelector('.gap-btn').addEventListener('click', (e) => {
         e.stopPropagation();
         contextMenu.style.display = 'none';
@@ -216,7 +262,7 @@ function createImageContextMenu(img, imageWrapper, deleteBtn, slideIndex) {
             showContainerSettingsPanel(container, slideIndex, img);
         }
     });
-    
+
     // Закрываем меню при клике вне его
     const closeMenuHandler = (e) => {
         if (!imageWrapper.contains(e.target) && !e.target.closest('.image-context-menu')) {
@@ -224,13 +270,59 @@ function createImageContextMenu(img, imageWrapper, deleteBtn, slideIndex) {
             document.removeEventListener('click', closeMenuHandler);
         }
     };
-    
+
     // Используем setTimeout, чтобы клик, открывший меню, не закрыл его сразу
     setTimeout(() => {
         document.addEventListener('click', closeMenuHandler);
     }, 100);
-    
+
     return contextMenu;
+}
+
+// Функция для замены изображения
+function replaceImageWithUpload(img, slideIndex, imageWrapper) {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.style.display = 'none';
+
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const sizeKey = img.dataset.sizeKey;
+            const oldSrc = img.src;
+
+            // Сохраняем размер
+            const savedSize = imageSizes[sizeKey];
+
+            // Обновляем src во всех слайдах
+            const allSlides = document.querySelectorAll('.slide');
+            allSlides.forEach(slide => {
+                const relatedImg = slide.querySelector(`img[data-size-key="${sizeKey}"]`);
+                if (relatedImg) {
+                    relatedImg.src = event.target.result;
+                    relatedImg.dataset.originalSrc = event.target.result;
+                }
+            });
+
+            // Обновляем в slideImages хранилище
+            if (slideImages[slideIndex]) {
+                slideImages[slideIndex] = slideImages[slideIndex].map(src =>
+                    src === oldSrc ? event.target.result : src
+                );
+            }
+
+            // Сохраняем
+            saveToLocalStorage();
+            showNotification('✓ Изображение заменено', 'success');
+        };
+        reader.readAsDataURL(file);
+    });
+
+    fileInput.click();
 }
 
 // Функция для добавления изображения в слайд
