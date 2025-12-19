@@ -350,7 +350,7 @@ function addImageToSlide(slideElement, imageSrc, slideIndex, replaceExisting = f
     img.className = 'slide-image uploaded-image';
     
     // Устанавливаем размер
-    const sizeKey = `${slideIndex}_${imageSrc.substring(0, 50)}`;
+    const sizeKey = `${slideIndex}_${String(imageSrc || '').substring(0, 50)}`;
     let savedSize = initialSize || imageSizes[sizeKey];
     
     // Если размер не задан, вычисляем оптимальный
@@ -628,7 +628,7 @@ function createImageUploadButton(slideIndex, slideElement, additionalSlides = []
                     
                     // Вычисляем оптимальный размер для основного слайда
                     const optimalSize = await calculateOptimalImageSize(tempImg, slideElement);
-                    const sizeKey = `${slideIndex}_${imageData.substring(0, 50)}`;
+                    const sizeKey = `${slideIndex}_${String(imageData || '').substring(0, 50)}`;
                     imageSizes[sizeKey] = optimalSize;
                     
                     // Добавляем изображение в основной слайд с оптимальным размером
