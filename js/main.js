@@ -81,7 +81,8 @@ function applyFontScale(percent) {
     // Set CSS variable for font scale
     root.style.setProperty('--font-scale', scale);
 
-    // Base sizes for each format
+    // Base sizes - 1:1 is reference, 4:5 and 9:16 stay constant
+    // Only 9:16 scales based on the slider
     const baseSizes = {
         '1-1': { heading: 38, subtitle: 16, emoji: 80 },
         '4-5': { heading: 32, subtitle: 15, emoji: 50 },
@@ -101,24 +102,41 @@ function applyFontScale(percent) {
 
         const sizes = baseSizes[format];
 
-        // Scale headings
+        // Scale headings - only 9:16 format scales, others remain constant
         const headings = slide.querySelectorAll('h1, h2');
         headings.forEach(h => {
-            const scaledSize = sizes.heading * scale;
+            let scaledSize;
+            if (format === '9-16') {
+                // Only 9:16 is affected by the slider
+                scaledSize = sizes.heading * scale;
+            } else {
+                // 1:1 and 4:5 always use their base size
+                scaledSize = sizes.heading;
+            }
             h.style.fontSize = scaledSize + 'px';
         });
 
-        // Scale subtitle and paragraphs
+        // Scale subtitle and paragraphs - only 9:16 format scales
         const textElements = slide.querySelectorAll('.subtitle, p');
         textElements.forEach(el => {
-            const scaledSize = sizes.subtitle * scale;
+            let scaledSize;
+            if (format === '9-16') {
+                scaledSize = sizes.subtitle * scale;
+            } else {
+                scaledSize = sizes.subtitle;
+            }
             el.style.fontSize = scaledSize + 'px';
         });
 
-        // Scale emoji
+        // Scale emoji - only 9:16 format scales
         const emojis = slide.querySelectorAll('.emoji');
         emojis.forEach(emoji => {
-            const scaledSize = sizes.emoji * scale;
+            let scaledSize;
+            if (format === '9-16') {
+                scaledSize = sizes.emoji * scale;
+            } else {
+                scaledSize = sizes.emoji;
+            }
             emoji.style.fontSize = scaledSize + 'px';
         });
     });
