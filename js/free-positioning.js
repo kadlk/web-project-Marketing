@@ -14,6 +14,7 @@ function enableFreePositioning(imageWrapper, slideIndex) {
 
     // Делаем обёртку абсолютно позиционируемой
     imageWrapper.style.position = 'absolute';
+    imageWrapper.style.zIndex = '50'; // Base z-index so images appear above content
     imageWrapper.classList.add('free-positioning-active');
 
     // Загружаем сохранённые координаты и масштаб
@@ -367,6 +368,9 @@ function disableFreePositioning(imageWrapper) {
     imageWrapper.style.top = '';
     imageWrapper.style.width = '';
     imageWrapper.style.height = '';
+    imageWrapper.style.zIndex = '';
+    imageWrapper.style.transform = '';
+    imageWrapper.style.transformOrigin = '';
     imageWrapper.classList.remove('free-positioning-active');
     imageWrapper.draggable = true;
 
@@ -389,8 +393,15 @@ function toggleFreePositioningMode(slideIndex, enable) {
                 container.style.border = 'none';
                 container.style.padding = '0';
                 container.style.display = 'block';
-                container.style.position = 'relative';
+                container.style.position = 'absolute';
+                container.style.top = '0';
+                container.style.left = '0';
+                container.style.right = '0';
+                container.style.bottom = '0';
                 container.style.height = '100%';
+                container.style.width = '100%';
+                container.style.zIndex = '100';
+                container.style.pointerEvents = 'auto';
             }
 
             // Центрируем группу изображений как единое целое
@@ -409,6 +420,13 @@ function toggleFreePositioningMode(slideIndex, enable) {
                 container.style.display = 'flex';
                 container.style.position = '';
                 container.style.height = '';
+                container.style.width = '';
+                container.style.top = '';
+                container.style.left = '';
+                container.style.right = '';
+                container.style.bottom = '';
+                container.style.zIndex = '';
+                container.style.pointerEvents = '';
             }
 
             wrappers.forEach(wrapper => {
@@ -433,6 +451,7 @@ function centerImageGroup(wrappers, slide, slideIndex) {
         const savedScale = imageScales[scaleKey] || 1;
 
         wrapper.style.position = 'absolute';
+        wrapper.style.zIndex = '50'; // Base z-index so images appear above content
         wrapper.classList.add('free-positioning-active');
 
         const originalWidth = wrapper.offsetWidth;
