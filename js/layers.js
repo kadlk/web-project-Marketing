@@ -252,10 +252,16 @@ function initLayersDragDrop(layersList, elements, activeSlides) {
         return;
     }
 
-    Sortable.create(layersList, {
+    // Destroy existing Sortable instance if it exists
+    if (layersList.sortableInstance) {
+        layersList.sortableInstance.destroy();
+    }
+
+    const sortableInstance = Sortable.create(layersList, {
         animation: 150,
         ghostClass: 'layer-ghost',
         dragClass: 'layer-dragging',
+        forceFallback: false,
         onEnd: (evt) => {
             // Get the element that was moved
             const draggedLayerItem = evt.item;
@@ -309,11 +315,16 @@ function initLayersDragDrop(layersList, elements, activeSlides) {
                 }
             });
 
-            // Re-render to update layer items and element references
-            renderLayersPanel();
-            saveToLocalStorage();
+            // Don't re-render immediately - let Sortable finish
+            setTimeout(() => {
+                renderLayersPanel();
+                saveToLocalStorage();
+            }, 50);
         }
     });
+
+    // Store reference to sortable instance
+    layersList.sortableInstance = sortableInstance;
 }
 
 // Update layers when slide changes

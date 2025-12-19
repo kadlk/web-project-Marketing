@@ -75,6 +75,15 @@
         <button id="save-json-btn" class="export-btn" style="background: #10b981;">Сохранить JSON</button>
         <button id="edit-json-btn" class="export-btn" style="background: #0891b2;">Редактировать JSON</button>
         <button id="watermark-btn" class="export-btn" style="background: #8b5cf6;">Водяной знак</button>
+
+        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.2);">
+            <label style="display: block; color: rgba(255,255,255,0.8); font-size: 13px; margin-bottom: 8px;">
+                Размер текста: <span id="font-scale-value" style="color: #3b82f6; font-weight: bold;">100%</span>
+            </label>
+            <input type="range" id="font-scale-slider" min="70" max="150" value="100" style="width: 100%; cursor: pointer;">
+            <small style="color: rgba(255,255,255,0.5); display: block; margin-top: 5px;">Регулирует все размеры текста в проекте</small>
+        </div>
+
         <label class="export-checkbox">
             <input type="checkbox" id="export-1-1" checked> 1:1
         </label>

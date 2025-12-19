@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initAddElements();
     initWatermarkButton();
     initKeyboardShortcuts();
+    initFontScaleSlider();
 });
 
 function initWatermarkButton() {
@@ -47,6 +48,70 @@ function initWatermarkButton() {
             }
         });
     }
+}
+
+function initFontScaleSlider() {
+    const slider = document.getElementById('font-scale-slider');
+    const valueDisplay = document.getElementById('font-scale-value');
+
+    if (!slider || !valueDisplay) return;
+
+    // Load saved value from localStorage
+    const savedScale = localStorage.getItem('fontScale') || '100';
+    slider.value = savedScale;
+    valueDisplay.textContent = savedScale + '%';
+    applyFontScale(parseFloat(savedScale));
+
+    slider.addEventListener('input', (e) => {
+        const scalePercent = e.target.value;
+        valueDisplay.textContent = scalePercent + '%';
+
+        // Save to localStorage
+        localStorage.setItem('fontScale', scalePercent);
+
+        // Apply the scale
+        applyFontScale(parseFloat(scalePercent));
+    });
+}
+
+function applyFontScale(percent) {
+    const scale = percent / 100;
+    const root = document.documentElement;
+
+    // Set CSS variable for font scale
+    root.style.setProperty('--font-scale', scale);
+
+    // Apply scale to all text elements across all slides
+    const slides = document.querySelectorAll('.slide');
+    slides.forEach(slide => {
+        // Scale headings
+        const headings = slide.querySelectorAll('h1, h2');
+        headings.forEach(h => {
+            const baseSize = h.classList.contains('format-9-16') ? 26 :
+                           h.classList.contains('format-4-5') ? 32 : 38;
+            h.style.fontSize = (baseSize * scale) + 'px';
+        });
+
+        // Scale subtitle and paragraphs
+        const textElements = slide.querySelectorAll('.subtitle, p');
+        textElements.forEach(el => {
+            let baseSize = 16;
+            if (el.closest('.format-9-16')) baseSize = 13;
+            else if (el.closest('.format-4-5')) baseSize = 15;
+
+            el.style.fontSize = (baseSize * scale) + 'px';
+        });
+
+        // Scale emoji
+        const emojis = slide.querySelectorAll('.emoji');
+        emojis.forEach(emoji => {
+            let baseSize = 80;
+            if (emoji.closest('.format-9-16')) baseSize = 36;
+            else if (emoji.closest('.format-4-5')) baseSize = 50;
+
+            emoji.style.fontSize = (baseSize * scale) + 'px';
+        });
+    });
 }
 
 function initKeyboardShortcuts() {
