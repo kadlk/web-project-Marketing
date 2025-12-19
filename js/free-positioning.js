@@ -384,22 +384,27 @@ function toggleFreePositioningMode(slideIndex, enable) {
         if (enable) {
             // Включаем режим свободного позиционирования
             if (container) {
-                container.style.border = 'none';
-                container.style.padding = '0';
-                container.style.display = 'block';
-                container.style.position = 'absolute';
-                container.style.top = '0';
-                container.style.left = '0';
-                container.style.right = '0';
-                container.style.bottom = '0';
-                container.style.height = '100%';
-                container.style.width = '100%';
-                container.style.zIndex = '100';
-                container.style.pointerEvents = 'auto';
-                container.style.overflow = 'visible';
-                container.style.flexWrap = 'nowrap';
+                container.style.border = 'none !important';
+                container.style.padding = '0 !important';
+                container.style.margin = '0 !important';
+                container.style.display = 'block !important';
+                container.style.position = 'absolute !important';
+                container.style.top = '0 !important';
+                container.style.left = '0 !important';
+                container.style.right = '0 !important';
+                container.style.bottom = '0 !important';
+                container.style.height = '100% !important';
+                container.style.width = '100% !important';
+                container.style.zIndex = '100 !important';
+                container.style.pointerEvents = 'auto !important';
+                container.style.overflow = 'visible !important';
+                container.style.flexDirection = 'column !important';
+                container.style.flexWrap = 'nowrap !important';
+                container.style.justifyContent = 'unset !important';
+                container.style.alignItems = 'unset !important';
+                container.style.gap = '0 !important';
                 // Container overlays the entire slide to allow free positioning
-                // Images can move freely without being constrained
+                // Images can move freely without being constrained by flex layout
             }
 
             // Центрируем группу изображений как единое целое
@@ -413,18 +418,19 @@ function toggleFreePositioningMode(slideIndex, enable) {
         } else {
             // Отключаем режим
             if (container) {
-                container.style.border = '';
-                container.style.padding = '';
+                // Полностью очищаем все стили для восстановления flex режима
+                container.style.cssText = '';
+                // Восстанавливаем flex layout
                 container.style.display = 'flex';
-                container.style.position = '';
-                container.style.height = '';
-                container.style.width = '';
-                container.style.top = '';
-                container.style.left = '';
-                container.style.right = '';
-                container.style.bottom = '';
-                container.style.zIndex = '';
-                container.style.pointerEvents = '';
+                container.style.gap = '10px';
+                container.style.justifyContent = 'center';
+                container.style.alignItems = 'center';
+                container.style.flexDirection = 'row';
+                container.style.flexWrap = 'wrap';
+                container.style.margin = '15px 0';
+                container.style.width = '100%';
+                container.style.border = '2px dashed rgba(255, 255, 255, 0.15)';
+                container.style.padding = '10px';
             }
 
             wrappers.forEach(wrapper => {
