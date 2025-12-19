@@ -67,8 +67,11 @@ function renderLayersPanel() {
     // Показываем панель когда есть элементы
     if (layersPanel) layersPanel.style.display = 'block';
     
-    // Reverse to show top elements first (like Photoshop)
-    elements.reverse().forEach((element, index) => {
+    // Create a mapping of displayed index to actual element
+    // We reverse for display, but track the actual element reference
+    const displayedElements = [...elements].reverse();
+
+    displayedElements.forEach((element, displayIndex) => {
         const layerItem = document.createElement('div');
         layerItem.className = 'layer-item';
         layerItem.style.cssText = `
@@ -84,11 +87,11 @@ function renderLayersPanel() {
             font-size: 13px;
             border: 1px solid transparent;
         `;
-        
+
         // Determine layer type and icon
         let icon = '📄';
         let name = 'Элемент';
-        
+
         if (element.classList.contains('emoji')) {
             icon = element.textContent.substring(0, 2);
             name = 'Эмоджи';
@@ -109,78 +112,76 @@ function renderLayersPanel() {
             icon = '🖼️';
             name = 'Картинка';
         }
-        
+
         layerItem.innerHTML = `
             <span style="font-size: 18px;">${icon}</span>
             <span style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${name}</span>
             <div class="layer-controls" style="display: flex; gap: 3px;">
-                <button class="layer-up-btn" title="Вверх" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; font-size: 12px;">↑</button>
-                <button class="layer-down-btn" title="Вниз" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; font-size: 12px;">↓</button>
+                <button class="layer-up-btn" title="Вверх на слой" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; font-size: 12px;">↑</button>
+                <button class="layer-down-btn" title="Вниз на слой" style="background: rgba(255,255,255,0.1); border: none; color: white; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; font-size: 12px;">↓</button>
             </div>
         `;
-        
+
         // Get buttons
         const upBtn = layerItem.querySelector('.layer-up-btn');
         const downBtn = layerItem.querySelector('.layer-down-btn');
-        
+
         // Disable buttons if at edges
-        if (index === 0) upBtn.disabled = true;
-        if (index === elements.length - 1) downBtn.disabled = true;
-        
-        // Move up (towards beginning of array, which is end of DOM)
+        if (displayIndex === 0) downBtn.disabled = true;
+        if (displayIndex === displayedElements.length - 1) upBtn.disabled = true;
+
+        // Move up in display (increase z-index, move later in DOM)
         upBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            console.log('Moving layer up, index:', index);
-            if (index > 0) {
-                // Apply to all slide formats
-                activeSlides.forEach(slideEl => {
-                    const wrapper = slideEl.querySelector('.slide-content-wrapper') || slideEl;
-                    const allElements = Array.from(wrapper.children).filter(el => {
-                        return !el.classList.contains('slide-number') && 
-                               !el.classList.contains('watermark-layer') &&
-                               !el.classList.contains('logo') &&
-                               !el.classList.contains('active-slide-label');
-                    });
-                    
-                    // Reverse to match display order
-                    allElements.reverse();
-                    
-                    if (allElements[index] && allElements[index - 1]) {
-                        wrapper.insertBefore(allElements[index], allElements[index - 1]);
-                    }
+            console.log('Moving layer up (displayed), actual index:', elements.indexOf(element));
+
+            // Apply to all slide formats
+            activeSlides.forEach(slideEl => {
+                const wrapper = slideEl.querySelector('.slide-content-wrapper') || slideEl;
+                const allElements = Array.from(wrapper.children).filter(el => {
+                    return !el.classList.contains('slide-number') &&
+                           !el.classList.contains('watermark-layer') &&
+                           !el.classList.contains('logo') &&
+                           !el.classList.contains('active-slide-label');
                 });
-                
-                renderLayersPanel();
-                saveToLocalStorage();
-            }
+
+                // Find the element in this slide and move it
+                const elementIndex = allElements.indexOf(element);
+                if (elementIndex > 0) {
+                    // Move element to come earlier in DOM (visually on top)
+                    wrapper.insertBefore(allElements[elementIndex], allElements[elementIndex - 1]);
+                }
+            });
+
+            renderLayersPanel();
+            saveToLocalStorage();
         });
-        
-        // Move down (towards end of array, which is beginning of DOM)
+
+        // Move down in display (decrease z-index, move earlier in DOM)
         downBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            console.log('Moving layer down, index:', index);
-            if (index < elements.length - 1) {
-                // Apply to all slide formats
-                activeSlides.forEach(slideEl => {
-                    const wrapper = slideEl.querySelector('.slide-content-wrapper') || slideEl;
-                    const allElements = Array.from(wrapper.children).filter(el => {
-                        return !el.classList.contains('slide-number') && 
-                               !el.classList.contains('watermark-layer') &&
-                               !el.classList.contains('logo') &&
-                               !el.classList.contains('active-slide-label');
-                    });
-                    
-                    // Reverse to match display order
-                    allElements.reverse();
-                    
-                    if (allElements[index] && allElements[index + 1]) {
-                        wrapper.insertBefore(allElements[index + 1], allElements[index]);
-                    }
+            console.log('Moving layer down (displayed), actual index:', elements.indexOf(element));
+
+            // Apply to all slide formats
+            activeSlides.forEach(slideEl => {
+                const wrapper = slideEl.querySelector('.slide-content-wrapper') || slideEl;
+                const allElements = Array.from(wrapper.children).filter(el => {
+                    return !el.classList.contains('slide-number') &&
+                           !el.classList.contains('watermark-layer') &&
+                           !el.classList.contains('logo') &&
+                           !el.classList.contains('active-slide-label');
                 });
-                
-                renderLayersPanel();
-                saveToLocalStorage();
-            }
+
+                // Find the element in this slide and move it
+                const elementIndex = allElements.indexOf(element);
+                if (elementIndex < allElements.length - 1) {
+                    // Move element to come later in DOM (visually behind)
+                    wrapper.insertBefore(allElements[elementIndex + 1], allElements[elementIndex]);
+                }
+            });
+
+            renderLayersPanel();
+            saveToLocalStorage();
         });
         
         // Click to select and edit element
