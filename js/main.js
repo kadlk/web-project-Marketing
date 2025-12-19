@@ -1242,36 +1242,32 @@ function initAddElements() {
                     newElement.style.color = '#ffffff';
                     newElement.style.marginBottom = '10px';
                 } else if (type === 'image') {
-                    newElement = document.createElement('div');
-                    newElement.className = 'uploaded-image-wrapper';
-                    newElement.innerHTML = `
-                        <img src="https://placehold.co/300x200?text=Click+to+Settings" class="slide-image uploaded-image" alt="Image">
-                        <button class="delete-image-btn">×</button>
-                    `;
-                    // Setup basic interaction manually if needed or valid by delegation
-                    const delBtn = newElement.querySelector('.delete-image-btn');
-                    delBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        newElement.remove();
-                        saveToLocalStorage();
+                    // Create hidden file input for image upload
+                    const fileInput = document.createElement('input');
+                    fileInput.type = 'file';
+                    fileInput.accept = 'image/*';
+                    fileInput.style.display = 'none';
+
+                    fileInput.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                                const imageData = event.target.result;
+                                const allSlides = document.querySelectorAll(`.slide[data-slide-index="${activeSlideIndex}"]`);
+                                if (allSlides.length > 0 && typeof addImageToSlide === 'function') {
+                                    allSlides.forEach(slide => {
+                                        addImageToSlide(slide, imageData, activeSlideIndex);
+                                    });
+                                    saveToLocalStorage();
+                                }
+                            };
+                            reader.readAsDataURL(file);
+                        }
                     });
-                    
-                    const img = newElement.querySelector('img');
-                    // Logic to open settings to upload real image would be handled by existing listener 
-                    // IF existing listener delegates...
-                    // In images.js:
-                    // document.addEventListener('click', (e) => { if target.closest('.uploaded-image') ... }) ??
-                    // No, images.js attaches listeners to specific elements usually.
-                    // But main.js delegation line 103 checks closest('.uploaded-image-wrapper').
-                    
-                    // We need to attach click listener to open Container Settings for this new image?
-                    // Or upload?
-                    // Let's rely on manual attachment if delegation isn't there.
-                    img.addEventListener('click', (e) => {
-                         e.stopPropagation();
-                         // Open container settings for this image (passed as targetImage)
-                         showContainerSettingsPanel(null, activeSlideIndex, img, slide);
-                    });
+
+                    // Trigger file selection dialog
+                    fileInput.click();
                 }
                 
                 if (newElement) {

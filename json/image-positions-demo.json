@@ -1,0 +1,182 @@
+{
+  "projects": [
+    {
+      "id": "image-positions-demo",
+      "name": "Демо позиций изображений",
+      "logo": "images/Logo/Logo GameInvitation.png",
+      "watermark": "GameInvitation.com",
+      "logoSettings": {
+        "heightPercent": 12,
+        "topPercent": 8,
+        "leftPercent": 8,
+        "opacity": 1,
+        "shadow": "0px 2px 8px rgba(0, 0, 0, 0.5)",
+        "border": false,
+        "borderWidth": 0,
+        "borderColor": "#ffffff",
+        "borderRadius": 0
+      },
+      "slides": [
+        {
+          "id": 1,
+          "background": {
+            "type": "gradient",
+            "colors": ["#1e3a8a", "#3b82f6"],
+            "direction": 135
+          },
+          "emoji": "🖼️",
+          "title": {
+            "text": "Позиция изображений",
+            "tag": "h1"
+          },
+          "subtitle": {
+            "text": "Выбирайте где размещать картинки"
+          },
+          "paragraph": {
+            "text": "Используйте imagePosition для гибкого расположения"
+          },
+          "images": [],
+          "containerSettings": {
+            "gap": 15,
+            "align": "center",
+            "direction": "row",
+            "radius": 0
+          },
+          "cta": null
+        },
+        {
+          "id": 2,
+          "background": {
+            "type": "gradient",
+            "colors": ["#7c3aed", "#a855f7"],
+            "direction": 135
+          },
+          "emoji": "📍",
+          "title": {
+            "text": "После заголовка"
+          },
+          "subtitle": {
+            "text": "imagePosition: 'after-title'"
+          },
+          "paragraph": {
+            "text": "Картинка появится между заголовком и подзаголовком"
+          },
+          "images": [
+            {
+              "src": "images/placeholders/phone_mockup.png",
+              "alt": "Mockup",
+              "size": 40
+            }
+          ],
+          "imagePosition": "after-title",
+          "containerSettings": {
+            "gap": 15,
+            "align": "center",
+            "direction": "column",
+            "radius": 8
+          },
+          "cta": null
+        },
+        {
+          "id": 3,
+          "background": {
+            "type": "gradient",
+            "colors": ["#0891b2", "#06b6d4"],
+            "direction": 135
+          },
+          "emoji": "📍",
+          "title": {
+            "text": "После подзаголовка"
+          },
+          "subtitle": {
+            "text": "imagePosition: 'after-subtitle'"
+          },
+          "paragraph": {
+            "text": "Картинка появится между подзаголовком и параграфом"
+          },
+          "images": [
+            {
+              "src": "images/placeholders/phone_mockup.png",
+              "alt": "Mockup",
+              "size": 40
+            }
+          ],
+          "imagePosition": "after-subtitle",
+          "containerSettings": {
+            "gap": 15,
+            "align": "center",
+            "direction": "column",
+            "radius": 8
+          },
+          "cta": null
+        },
+        {
+          "id": 4,
+          "background": {
+            "type": "gradient",
+            "colors": ["#dc2626", "#f43f5e"],
+            "direction": 135
+          },
+          "emoji": "📍",
+          "title": {
+            "text": "После параграфа"
+          },
+          "subtitle": {
+            "text": "imagePosition: 'after-paragraph'"
+          },
+          "paragraph": {
+            "text": "Картинка появится после всего текста, но перед CTA"
+          },
+          "images": [
+            {
+              "src": "images/placeholders/phone_mockup.png",
+              "alt": "Mockup",
+              "size": 40
+            }
+          ],
+          "imagePosition": "after-paragraph",
+          "containerSettings": {
+            "gap": 15,
+            "align": "center",
+            "direction": "column",
+            "radius": 8
+          },
+          "cta": null
+        },
+        {
+          "id": 5,
+          "background": {
+            "type": "gradient",
+            "colors": ["#059669", "#10b981"],
+            "direction": 135
+          },
+          "emoji": "📍",
+          "title": {
+            "text": "После всего (по умолчанию)"
+          },
+          "subtitle": {
+            "text": "imagePosition: 'after-all' или не указан"
+          },
+          "paragraph": {
+            "text": "Картинка появится после всех элементов, перед CTA"
+          },
+          "images": [
+            {
+              "src": "images/placeholders/phone_mockup.png",
+              "alt": "Mockup",
+              "size": 40
+            }
+          ],
+          "imagePosition": "after-all",
+          "containerSettings": {
+            "gap": 15,
+            "align": "center",
+            "direction": "column",
+            "radius": 8
+          },
+          "cta": null
+        }
+      ]
+    }
+  ]
+}

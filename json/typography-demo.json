@@ -1,0 +1,114 @@
+{
+  "projects": [
+    {
+      "id": "typography-demo",
+      "name": "Демо типографии и размеров",
+      "logo": "images/Logo/Logo GameInvitation.png",
+      "watermark": "GameInvitation.com",
+      "logoSettings": {
+        "heightPercent": 12,
+        "topPercent": 8,
+        "leftPercent": 8,
+        "opacity": 1,
+        "shadow": "0px 2px 8px rgba(0, 0, 0, 0.5)",
+        "border": false,
+        "borderWidth": 0,
+        "borderColor": "#ffffff",
+        "borderRadius": 0
+      },
+      "slides": [
+        {
+          "id": 1,
+          "background": {
+            "type": "gradient",
+            "colors": ["#1e3a8a", "#3b82f6"],
+            "direction": 135
+          },
+          "emoji": "🎨",
+          "title": {
+            "text": "Geometria",
+            "tag": "h1"
+          },
+          "subtitle": {
+            "text": "Большой & профессиональный"
+          },
+          "paragraph": {
+            "text": "Чистый sans-serif шрифт для современного дизайна"
+          },
+          "images": [],
+          "containerSettings": {
+            "gap": 15,
+            "align": "center",
+            "direction": "row",
+            "radius": 0
+          },
+          "cta": null
+        },
+        {
+          "id": 2,
+          "background": {
+            "type": "gradient",
+            "colors": ["#7c3aed", "#a855f7"],
+            "direction": 135
+          },
+          "emoji": "✨",
+          "title": {
+            "text": "Comfortaa",
+            "tag": "h2"
+          },
+          "subtitle": {
+            "text": "Мягкий и округлый"
+          },
+          "paragraph": {
+            "text": "Идеален для молодежных и дружелюбных проектов"
+          },
+          "images": [
+            {
+              "src": "images/placeholders/phone_mockup.png",
+              "alt": "Mockup",
+              "size": 35
+            }
+          ],
+          "imagePosition": "after-title",
+          "containerSettings": {
+            "gap": 15,
+            "align": "center",
+            "direction": "column",
+            "radius": 8
+          },
+          "cta": null
+        },
+        {
+          "id": 3,
+          "background": {
+            "type": "gradient",
+            "colors": ["#dc2626", "#f43f5e"],
+            "direction": 135
+          },
+          "emoji": "⚡",
+          "title": {
+            "text": "Georgia",
+            "tag": "h2"
+          },
+          "subtitle": {
+            "text": "Классический serif"
+          },
+          "paragraph": {
+            "text": "Традиционный вид для бизнеса"
+          },
+          "images": [],
+          "containerSettings": {
+            "gap": 15,
+            "align": "center",
+            "direction": "row",
+            "radius": 0
+          },
+          "cta": {
+            "text": "Узнать больше →",
+            "color": "#ffffff"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "projects": [
+    {
+      "id": "ny-distance-pro-v1",
+      "name": "НГ: Расстояние (Wine & Gold)",
+      "logo": "",
+      "watermark": "GameInvitation.com",
+      "logoSettings": {
+        "heightPercent": 12,
+        "topPercent": 8,
+        "leftPercent": 8,
+        "opacity": 0.6,
+        "shadow": "0px 2px 4px rgba(0,0,0,0.5)",
+        "border": false,
+        "borderWidth": 0,
+        "borderColor": "#ffffff",
+        "borderRadius": 0
+      },
+      "slides": [
+        {
+          "id": 1,
+          "background": { "type": "gradient", "colors": ["#4c0519", "#be123c", "#fb7185"], "direction": 160 },
+          "emoji": "✈️",
+          "title": { "text": "Между вами\nтысячи км?", "tag": "h1" },
+          "subtitle": { "text": "Подарок, который долетит мгновенно" },
+          "paragraph": { "text": "Когда нельзя обнять лично — отправь квест, наполненный вашими общими воспоминаниями." },
+          "images": [],
+          "containerSettings": { "gap": 20, "align": "center", "direction": "column", "radius": 0 },
+          "cta": null
+        },
+        {
+          "id": 2,
+          "background": { "type": "gradient", "colors": ["#4c0519", "#9f1239"], "direction": 135 },
+          "emoji": "📲",
+          "title": { "text": "Ваши мемы\nстанут игрой", "tag": "h2" },
+          "subtitle": { "text": "Экран телефона с вашим лучшим селфи" },
+          "paragraph": { "text": "Загрузи фото из ваших поездок в «Слот» или «Мемори». Это в 100 раз теплее, чем просто перевод в банке." },
+          "images": [{ "src": "images/placeholders/phone_mockup_ny.png", "alt": "Mockup", "size": 65 }],
+          "containerSettings": { "gap": 15, "align": "center", "direction": "row", "radius": 20 },
+          "cta": null
+        },
+        {
+          "id": 3,
+          "background": { "type": "gradient", "colors": ["#881337", "#e11d48"], "direction": 135 },
+          "emoji": "🎁",
+          "title": { "text": "Что спрятать\nв финале?", "tag": "h2" },
+          "subtitle": { "text": "Внутри может быть всё:" },
+          "paragraph": { "text": "Билет на рейс к тебе, сертификат в любимый спа или просто ссылка на секретное видео." },
+          "images": [],
+          "containerSettings": { "gap": 40, "align": "center", "direction": "row", "radius": 0 },
+          "cta": null
+        },
+        {
+          "id": 4,
+          "background": { "type": "gradient", "colors": ["#4c0519", "#111827"], "direction": 180 },
+          "emoji": "✨",
+          "title": { "text": "Доставка радости\nбез границ", "tag": "h2" },
+          "subtitle": { "text": "Никаких очередей на почте" },
+          "paragraph": { "text": "Создай ссылку за 5 минут, пока пьешь кофе. Твой подарок окажется в Direct получателя мгновенно." },
+          "images": [],
+          "containerSettings": { "gap": 20, "align": "center", "direction": "row", "radius": 0 },
+          "cta": null
+        },
+        {
+          "id": 5,
+          "background": { "type": "solid", "colors": ["#4c0519"] },
+          "emoji": "❤️",
+          "title": { "text": "Будь рядом\nв эту ночь", "tag": "h1" },
+          "subtitle": { "text": "GameInvitation.com" },
+          "paragraph": { "text": "Сделай этот Новый год особенным для тех, по кому скучаешь. Начни создавать сейчас." },
+          "images": [],
+          "containerSettings": { "gap": 30, "align": "center", "direction": "row", "radius": 20 },
+          "cta": { "text": "Создать квест →", "color": "#be123c" }
+        }
+      ]
+    }
+  ]
+}

@@ -32,6 +32,94 @@ function fitSlideContent(slide) {
     }
 }
 
+// Функция для создания контейнера с изображениями
+function createImageContainer(slideData, slideIndex) {
+    const container = document.createElement('div');
+    container.className = 'slide-image-container';
+    container.dataset.slideIndex = slideIndex;
+
+    // Применяем настройки контейнера из JSON или значения по умолчанию
+    const containerSettingsData = slideData.containerSettings || {};
+    const gap = containerSettingsData.gap || 15;
+    const align = containerSettingsData.align || 'center';
+    const direction = containerSettingsData.direction || 'row';
+    const radius = containerSettingsData.radius || 0;
+
+    container.style.gap = gap + 'px';
+    container.style.flexDirection = direction;
+    container.style.borderRadius = radius + 'px';
+
+    // Сохраняем в dataset для правильной работы панели настроек
+    container.dataset.justifyContent = align;
+    container.dataset.direction = direction;
+
+    // Применяем выравнивание в зависимости от direction
+    if (direction === 'row') {
+        container.style.justifyContent = align;
+        container.style.alignItems = 'center';
+    } else { // column
+        container.style.alignItems = 'center';
+        container.style.justifyContent = align;
+    }
+
+    const preset = containerSettingsData.preset;
+    container.classList.remove('layout-side', 'layout-top', 'layout-bottom');
+    if (preset === 'image-left' || preset === 'image-right') {
+        container.classList.add('layout-side');
+    } else if (preset === 'image-top') {
+        container.classList.add('layout-top');
+    } else if (preset === 'image-bottom') {
+        container.classList.add('layout-bottom');
+    }
+
+    // Сохраняем настройки контейнера в глобальное хранилище для всех форматов
+    const settingsKey11 = `container_${slideIndex}_1-1`;
+    const settingsKey916 = `container_${slideIndex}_9-16`;
+    const settingsKey45 = `container_${slideIndex}_4-5`;
+
+    containerSettings[settingsKey11] = {
+        gap: gap,
+        align: align,
+        direction: direction,
+        radius: radius,
+        preset: preset
+    };
+    containerSettings[settingsKey916] = {
+        gap: gap,
+        align: align,
+        direction: direction,
+        radius: radius,
+        preset: preset
+    };
+    containerSettings[settingsKey45] = {
+        gap: gap,
+        align: align,
+        direction: direction,
+        radius: radius,
+        preset: preset
+    };
+
+    slideData.images.forEach(imgData => {
+        // Support both 'src' (new) and 'url' (old) formats
+        const imageSrc = imgData.src || imgData.url;
+        if (imageSrc && typeof imageSrc === 'string') {
+            // Create temporary slide element for addImageToSlide
+            const tempSlide = document.createElement('div');
+            tempSlide.className = 'slide';
+            tempSlide.appendChild(container);
+            addImageToSlide(tempSlide, imageSrc, slideIndex, false, imgData.size || null);
+        }
+    });
+
+    // Применяем borderRadius к изображениям
+    const containerImages = container.querySelectorAll('img');
+    containerImages.forEach(img => {
+        img.style.borderRadius = radius + 'px';
+    });
+
+    return container;
+}
+
 // Функция для создания слайда из JSON
 function createSlideFromJSON(slideData, slideIndex, totalSlides, logo, watermark) {
     const slide = document.createElement('div');
@@ -125,7 +213,45 @@ function createSlideFromJSON(slideData, slideIndex, totalSlides, logo, watermark
     contentWrapper.style.flexDirection = 'column';
     contentWrapper.style.alignItems = 'center';
     contentWrapper.style.justifyContent = 'center'; // По умолчанию
-    
+
+    // Определяем позицию для изображений (default: 'after-all')
+    const imagePosition = slideData.imagePosition || 'after-all';
+
+    // Функция для создания текстового элемента
+    const createTextElement = (textData, textType) => {
+        let element;
+        if (textType === 'title') {
+            element = document.createElement(textData.tag || 'h2');
+            element.innerHTML = textData.text.replace(/\n/g, '<br>');
+            element.style.fontFamily = textData.style?.fontFamily || "'Comfortaa', cursive";
+            element.style.color = textData.style?.color || '#ffffff';
+        } else if (textType === 'subtitle') {
+            element = document.createElement('div');
+            element.innerHTML = textData.text.replace(/\n/g, '<br>');
+            element.className = 'subtitle';
+            element.style.fontFamily = textData.style?.fontFamily || "'Comfortaa', cursive";
+            element.style.color = textData.style?.color || '#ffffff';
+        } else if (textType === 'paragraph') {
+            element = document.createElement('p');
+            element.innerHTML = textData.text.replace(/\n/g, '<br>');
+            element.style.fontFamily = textData.style?.fontFamily || "'Comfortaa', cursive";
+            element.style.color = textData.style?.color || '#ffffff';
+        }
+
+        if (element) {
+            element.className = (element.className ? element.className + ' ' : '') + 'editable-text';
+            element.dataset.textType = textType;
+            element.contentEditable = 'true';
+
+            // Apply all style properties if available
+            if (textData.style) {
+                if (textData.style.fontSize) element.style.fontSize = textData.style.fontSize;
+                if (textData.style.textAlign) element.style.textAlign = textData.style.textAlign;
+            }
+        }
+        return element;
+    };
+
     // Эмоджи
     if (slideData.emoji) {
         const emoji = document.createElement('span');
@@ -135,225 +261,59 @@ function createSlideFromJSON(slideData, slideIndex, totalSlides, logo, watermark
         emoji.textContent = slideData.emoji;
         contentWrapper.appendChild(emoji);
     }
-    
-    // ... (Text elements skipped for brevity in replace check, assuming context is enough)
-    
+
     // Заголовок
     if (slideData.title) {
-        const title = document.createElement(slideData.title.tag || 'h2');
-        title.innerHTML = slideData.title.text.replace(/\n/g, '<br>');
-        title.className = 'editable-text';
-        title.dataset.textType = 'title';
-        title.contentEditable = 'true';
-        
-        // Применяем стили из JSON
-        if (slideData.title.style) {
-            if (slideData.title.style.fontFamily) {
-                title.style.fontFamily = slideData.title.style.fontFamily;
-            } else {
-                title.style.fontFamily = "'Comfortaa', cursive";
-            }
-            if (slideData.title.style.fontSize) {
-                title.style.fontSize = slideData.title.style.fontSize;
-            }
-            if (slideData.title.style.textAlign) {
-                title.style.textAlign = slideData.title.style.textAlign;
-            }
-            if (slideData.title.style.color) {
-                // Убеждаемся, что цвет в HEX формате
-                let color = slideData.title.style.color;
-                if (color.startsWith('rgb')) {
-                    const matches = color.match(/\d+/g);
-                    if (matches && matches.length >= 3) {
-                        color = '#' + matches.map(x => {
-                            const hex = parseInt(x).toString(16);
-                            return hex.length === 1 ? '0' + hex : hex;
-                        }).join('');
-                    }
-                }
-                title.style.color = color;
-            } else {
-                title.style.color = '#ffffff';
-            }
-        } else {
-            title.style.fontFamily = "'Comfortaa', cursive";
-            title.style.color = '#ffffff';
-        }
-        
+        const title = createTextElement(slideData.title, 'title');
         contentWrapper.appendChild(title);
     }
-    
+
+    // Изображения после заголовка (if requested)
+    if (imagePosition === 'after-title' && slideData.images && slideData.images.length > 0) {
+        const container = createImageContainer(slideData, slideIndex);
+        contentWrapper.appendChild(container);
+    }
+
     // Подзаголовок
     if (slideData.subtitle && slideData.subtitle.text) {
-        const subtitle = document.createElement('div');
-        subtitle.className = 'subtitle editable-text';
-        subtitle.dataset.textType = 'subtitle';
-        subtitle.contentEditable = 'true';
-        subtitle.innerHTML = slideData.subtitle.text.replace(/\n/g, '<br>');
-        
-        // Применяем стили из JSON
-        if (slideData.subtitle.style) {
-            if (slideData.subtitle.style.fontFamily) {
-                subtitle.style.fontFamily = slideData.subtitle.style.fontFamily;
-            } else {
-                subtitle.style.fontFamily = "'Comfortaa', cursive";
-            }
-            if (slideData.subtitle.style.fontSize) {
-                subtitle.style.fontSize = slideData.subtitle.style.fontSize;
-            }
-            if (slideData.subtitle.style.textAlign) {
-                subtitle.style.textAlign = slideData.subtitle.style.textAlign;
-            }
-            if (slideData.subtitle.style.color) {
-                // Убеждаемся, что цвет в HEX формате
-                let color = slideData.subtitle.style.color;
-                if (color.startsWith('rgb')) {
-                    const matches = color.match(/\d+/g);
-                    if (matches && matches.length >= 3) {
-                        color = '#' + matches.map(x => {
-                            const hex = parseInt(x).toString(16);
-                            return hex.length === 1 ? '0' + hex : hex;
-                        }).join('');
-                    }
-                }
-                subtitle.style.color = color;
-            } else {
-                subtitle.style.color = '#ffffff';
-            }
-        } else {
-            subtitle.style.fontFamily = "'Comfortaa', cursive";
-        }
-        
+        const subtitle = createTextElement(slideData.subtitle, 'subtitle');
         contentWrapper.appendChild(subtitle);
     }
-    
+
+    // Изображения после подзаголовка (if requested)
+    if (imagePosition === 'after-subtitle' && slideData.images && slideData.images.length > 0) {
+        const container = createImageContainer(slideData, slideIndex);
+        contentWrapper.appendChild(container);
+    }
+
     // Параграф
     if (slideData.paragraph && slideData.paragraph.text) {
-        const paragraph = document.createElement('p');
-        paragraph.className = 'editable-text';
-        paragraph.dataset.textType = 'paragraph';
-        paragraph.contentEditable = 'true';
-        paragraph.innerHTML = slideData.paragraph.text.replace(/\n/g, '<br>');
-        
-        // Применяем стили из JSON
-        if (slideData.paragraph.style) {
-            if (slideData.paragraph.style.fontFamily) {
-                paragraph.style.fontFamily = slideData.paragraph.style.fontFamily;
-            } else {
-                paragraph.style.fontFamily = "'Comfortaa', cursive";
-            }
-            if (slideData.paragraph.style.fontSize) {
-                paragraph.style.fontSize = slideData.paragraph.style.fontSize;
-            }
-            if (slideData.paragraph.style.textAlign) {
-                paragraph.style.textAlign = slideData.paragraph.style.textAlign;
-            }
-            if (slideData.paragraph.style.color) {
-                // Убеждаемся, что цвет в HEX формате
-                let color = slideData.paragraph.style.color;
-                if (color.startsWith('rgb')) {
-                    const matches = color.match(/\d+/g);
-                    if (matches && matches.length >= 3) {
-                        color = '#' + matches.map(x => {
-                            const hex = parseInt(x).toString(16);
-                            return hex.length === 1 ? '0' + hex : hex;
-                        }).join('');
-                    }
-                }
-                paragraph.style.color = color;
-            } else {
-                paragraph.style.color = '#ffffff';
-            }
-        } else {
-            paragraph.style.fontFamily = "'Comfortaa', cursive";
-            paragraph.style.color = '#ffffff';
-        }
-        
+        const paragraph = createTextElement(slideData.paragraph, 'paragraph');
         contentWrapper.appendChild(paragraph);
     }
-    
-    // Изображения
-    if (slideData.images && slideData.images.length > 0) {
-        // Всегда создаем контейнер, даже для одного изображения
-        const container = document.createElement('div');
-        container.className = 'slide-image-container';
-        container.dataset.slideIndex = slideIndex;
 
-        // Применяем настройки контейнера из JSON или значения по умолчанию
-        const containerSettingsData = slideData.containerSettings || {};
-        const gap = containerSettingsData.gap || 15;
-        const align = containerSettingsData.align || 'center';
-        const direction = containerSettingsData.direction || 'row';
-        const radius = containerSettingsData.radius || 0;
+    // Изображения после параграфа (if requested)
+    if (imagePosition === 'after-paragraph' && slideData.images && slideData.images.length > 0) {
+        const container = createImageContainer(slideData, slideIndex);
+        contentWrapper.appendChild(container);
+    }
 
-        container.style.gap = gap + 'px';
-        container.style.flexDirection = direction;
-        container.style.borderRadius = radius + 'px';
-
-        // Сохраняем в dataset для правильной работы панели настроек
-        container.dataset.justifyContent = align;
-        container.dataset.direction = direction;
-
-        // Применяем выравнивание в зависимости от direction
-        if (direction === 'row') {
-            container.style.justifyContent = align;
-            container.style.alignItems = 'center';
-        } else { // column
-            container.style.alignItems = 'center';
-            container.style.justifyContent = align;
+    // CTA
+    if (slideData.cta && slideData.cta.text) {
+        const cta = document.createElement('div');
+        cta.className = 'cta';
+        cta.textContent = slideData.cta.text;
+        if (slideData.cta.color) {
+            cta.style.color = slideData.cta.color;
         }
+        contentWrapper.appendChild(cta);
+    }
 
-        const preset = containerSettingsData.preset;
-        container.classList.remove('layout-side', 'layout-top', 'layout-bottom');
-        if (preset === 'image-left' || preset === 'image-right') {
-            container.classList.add('layout-side');
-        } else if (preset === 'image-top') {
-            container.classList.add('layout-top');
-        } else if (preset === 'image-bottom') {
-            container.classList.add('layout-bottom');
-        }
+    // Изображения в конце (default position)
+    if ((imagePosition === 'after-all' || !['after-title', 'after-subtitle', 'after-paragraph'].includes(imagePosition)) && slideData.images && slideData.images.length > 0) {
+        const container = createImageContainer(slideData, slideIndex);
 
-        // Сохраняем настройки контейнера в глобальное хранилище для всех форматов
-        const settingsKey11 = `container_${slideIndex}_1-1`;
-        const settingsKey916 = `container_${slideIndex}_9-16`;
-        const settingsKey45 = `container_${slideIndex}_4-5`;
-
-        containerSettings[settingsKey11] = {
-            gap: gap,
-            align: align,
-            direction: direction,
-            radius: radius,
-            preset: preset
-        };
-        containerSettings[settingsKey916] = {
-            gap: gap,
-            align: align,
-            direction: direction,
-            radius: radius,
-            preset: preset
-        };
-        containerSettings[settingsKey45] = {
-            gap: gap,
-            align: align,
-            direction: direction,
-            radius: radius,
-            preset: preset
-        };
-
-        slideData.images.forEach(imgData => {
-            // Support both 'src' (new) and 'url' (old) formats
-            const imageSrc = imgData.src || imgData.url;
-            if (imageSrc && typeof imageSrc === 'string') {
-                addImageWithControls(container, imageSrc, imgData.alt || '', slideIndex, imgData.size || null);
-            }
-        });
-
-        // Применяем borderRadius к изображениям
-        const containerImages = container.querySelectorAll('img');
-        containerImages.forEach(img => {
-            img.style.borderRadius = radius + 'px';
-        });
-
+        const preset = slideData.containerSettings?.preset;
         if (preset === 'image-left' || preset === 'image-right') {
             slide.classList.add('layout-side-slide');
             if (preset === 'image-left') {
@@ -366,18 +326,7 @@ function createSlideFromJSON(slideData, slideIndex, totalSlides, logo, watermark
             contentWrapper.appendChild(container);
         }
     }
-    
-    // CTA
-    if (slideData.cta && slideData.cta.text) {
-        const cta = document.createElement('div');
-        cta.className = 'cta';
-        cta.textContent = slideData.cta.text;
-        if (slideData.cta.color) {
-            cta.style.color = slideData.cta.color;
-        }
-        contentWrapper.appendChild(cta);
-    }
-    
+
     slide.appendChild(contentWrapper);
     
     /// Водяной знак (gameinvitation.com)

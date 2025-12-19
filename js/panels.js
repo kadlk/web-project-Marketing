@@ -1679,6 +1679,12 @@ function createLogoSettingsPanel() {
                     <input type="number" id="logo-border-radius" placeholder="Радиус" value="0" min="0" max="50" style="width: 33%; padding: 8px;">
                 </div>
             </div>
+            <div style="margin-bottom: 15px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 15px;">
+                <label>Загрузить логотип:</label>
+                <input type="file" id="logo-upload-input" accept="image/*" style="display: none;">
+                <button class="upload-btn" id="logo-upload-btn" style="width: 100%; margin-bottom: 10px;">📁 Выбрать файл</button>
+                <input type="text" id="logo-url-input" placeholder="или вставьте URL логотипа" style="width: 100%; padding: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: white; font-size: 12px; margin-bottom: 10px;">
+            </div>
         </div>
     `;
     
@@ -1884,7 +1890,65 @@ function createLogoSettingsPanel() {
             }
         }
     };
-    
+
+    // Обработчики загрузки логотипа
+    const logoUploadBtn = panel.querySelector('#logo-upload-btn');
+    const logoUploadInput = panel.querySelector('#logo-upload-input');
+    const logoUrlInput = panel.querySelector('#logo-url-input');
+
+    if (logoUploadBtn && logoUploadInput) {
+        logoUploadBtn.addEventListener('click', () => {
+            logoUploadInput.click();
+        });
+
+        logoUploadInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const project = projectsData.find(p => p.id === currentProjectId);
+                    if (project) {
+                        project.logo = event.target.result; // base64
+                        // Перезагружаем логотипы на всех слайдах
+                        const allSlides = document.querySelectorAll('.slide');
+                        allSlides.forEach(slide => {
+                            const oldLogo = slide.querySelector('.logo');
+                            if (oldLogo) {
+                                oldLogo.src = project.logo;
+                            }
+                        });
+                        saveToLocalStorage();
+                        showNotification('✓ Логотип загружен', 'success');
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    if (logoUrlInput) {
+        logoUrlInput.addEventListener('blur', () => {
+            const url = logoUrlInput.value.trim();
+            if (url) {
+                const project = projectsData.find(p => p.id === currentProjectId);
+                if (project) {
+                    project.logo = url;
+                    // Перезагружаем логотипы на всех слайдах
+                    const allSlides = document.querySelectorAll('.slide');
+                    allSlides.forEach(slide => {
+                        const oldLogo = slide.querySelector('.logo');
+                        if (oldLogo) {
+                            oldLogo.src = url;
+                        }
+                    });
+                    saveToLocalStorage();
+                    logoUrlInput.value = '';
+                    showNotification('✓ Логотип обновлен', 'success');
+                }
+            }
+        });
+    }
+
     return panel;
 }
 

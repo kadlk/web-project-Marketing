@@ -2,12 +2,11 @@ const WatermarkSystem = (function() {
     const defaultWatermark = {
         enabled: true,
         text: 'GameInvitation.com',
-        position: 'bottom-right',
+        xPercent: 5,
+        yPercent: 95,
         fontSize: 14,
         color: '#ffffff',
         opacity: 50,
-        offsetX: 20,
-        offsetY: 20,
         fontFamily: 'Geologica',
         fontWeight: '500',
         rotation: 0,
@@ -36,7 +35,29 @@ const WatermarkSystem = (function() {
         try {
             const saved = localStorage.getItem('globalWatermarkSettings');
             if (saved) {
-                window.globalWatermarkSettings = JSON.parse(saved);
+                const settings = JSON.parse(saved);
+                // Migration: convert old position-based to percentage-based
+                if (settings.position && !settings.xPercent) {
+                    const positionMap = {
+                        'top-left': { xPercent: 5, yPercent: 5 },
+                        'top-center': { xPercent: 50, yPercent: 5 },
+                        'top-right': { xPercent: 95, yPercent: 5 },
+                        'center-left': { xPercent: 5, yPercent: 50 },
+                        'center': { xPercent: 50, yPercent: 50 },
+                        'center-right': { xPercent: 95, yPercent: 50 },
+                        'bottom-left': { xPercent: 5, yPercent: 95 },
+                        'bottom-center': { xPercent: 50, yPercent: 95 },
+                        'bottom-right': { xPercent: 95, yPercent: 95 }
+                    };
+                    const mapped = positionMap[settings.position] || positionMap['bottom-right'];
+                    settings.xPercent = mapped.xPercent;
+                    settings.yPercent = mapped.yPercent;
+                    // Remove old fields
+                    delete settings.position;
+                    delete settings.offsetX;
+                    delete settings.offsetY;
+                }
+                window.globalWatermarkSettings = settings;
             }
         } catch (e) {
             console.warn('Failed to load watermark settings:', e);
@@ -54,7 +75,7 @@ const WatermarkSystem = (function() {
                 max-width: ${settings.imageSize}px;
                 max-height: ${settings.imageSize}px;
                 opacity: ${settings.opacity / 100};
-                transform: rotate(${settings.rotation}deg);
+                transform: translate(-50%, -50%) rotate(${settings.rotation}deg);
             `;
             watermark.appendChild(img);
         } else {
@@ -65,26 +86,13 @@ const WatermarkSystem = (function() {
                 font-weight: ${settings.fontWeight};
                 color: ${settings.color};
                 opacity: ${settings.opacity / 100};
-                transform: rotate(${settings.rotation}deg);
+                transform: translate(-50%, -50%) rotate(${settings.rotation}deg);
             `;
         }
 
-        const positions = {
-            'top-left': { top: settings.offsetY + 'px', left: settings.offsetX + 'px' },
-            'top-center': { top: settings.offsetY + 'px', left: '50%', transform: `translateX(-50%) rotate(${settings.rotation}deg)` },
-            'top-right': { top: settings.offsetY + 'px', right: settings.offsetX + 'px' },
-            'center-left': { top: '50%', left: settings.offsetX + 'px', transform: `translateY(-50%) rotate(${settings.rotation}deg)` },
-            'center': { top: '50%', left: '50%', transform: `translate(-50%, -50%) rotate(${settings.rotation}deg)` },
-            'center-right': { top: '50%', right: settings.offsetX + 'px', transform: `translateY(-50%) rotate(${settings.rotation}deg)` },
-            'bottom-left': { bottom: settings.offsetY + 'px', left: settings.offsetX + 'px' },
-            'bottom-center': { bottom: settings.offsetY + 'px', left: '50%', transform: `translateX(-50%) rotate(${settings.rotation}deg)` },
-            'bottom-right': { bottom: settings.offsetY + 'px', right: settings.offsetX + 'px' }
-        };
-
-        const pos = positions[settings.position] || positions['bottom-right'];
-        Object.assign(watermark.style, pos);
-
         watermark.style.position = 'absolute';
+        watermark.style.left = settings.xPercent + '%';
+        watermark.style.top = settings.yPercent + '%';
         watermark.style.zIndex = '50';
         watermark.style.pointerEvents = 'none';
         watermark.style.userSelect = 'none';
@@ -157,18 +165,13 @@ const WatermarkSystem = (function() {
                 </div>
 
                 <div class="transform-section">
-                    <label>Позиция:</label>
-                    <div class="position-grid">
-                        <button data-pos="top-left" class="pos-btn ${settings.position === 'top-left' ? 'active' : ''}">↖</button>
-                        <button data-pos="top-center" class="pos-btn ${settings.position === 'top-center' ? 'active' : ''}">↑</button>
-                        <button data-pos="top-right" class="pos-btn ${settings.position === 'top-right' ? 'active' : ''}">↗</button>
-                        <button data-pos="center-left" class="pos-btn ${settings.position === 'center-left' ? 'active' : ''}">←</button>
-                        <button data-pos="center" class="pos-btn ${settings.position === 'center' ? 'active' : ''}">⬤</button>
-                        <button data-pos="center-right" class="pos-btn ${settings.position === 'center-right' ? 'active' : ''}">→</button>
-                        <button data-pos="bottom-left" class="pos-btn ${settings.position === 'bottom-left' ? 'active' : ''}">↙</button>
-                        <button data-pos="bottom-center" class="pos-btn ${settings.position === 'bottom-center' ? 'active' : ''}">↓</button>
-                        <button data-pos="bottom-right" class="pos-btn ${settings.position === 'bottom-right' ? 'active' : ''}">↘</button>
-                    </div>
+                    <label>Позиция X (%): <span id="wm-x-val">${settings.xPercent}</span></label>
+                    <input type="range" id="wm-x-slider" min="0" max="100" value="${settings.xPercent}">
+                </div>
+
+                <div class="transform-section">
+                    <label>Позиция Y (%): <span id="wm-y-val">${settings.yPercent}</span></label>
+                    <input type="range" id="wm-y-slider" min="0" max="100" value="${settings.yPercent}">
                 </div>
 
                 <div id="wm-font-group" style="${settings.useImage ? 'display:none' : ''}">
@@ -214,16 +217,6 @@ const WatermarkSystem = (function() {
                     <input type="range" id="wm-rotation" min="-45" max="45" value="${settings.rotation}">
                 </div>
 
-                <div class="transform-section">
-                    <label>Отступ X: <span id="wm-offset-x-val">${settings.offsetX}</span>px</label>
-                    <input type="range" id="wm-offset-x" min="0" max="100" value="${settings.offsetX}">
-                </div>
-
-                <div class="transform-section">
-                    <label>Отступ Y: <span id="wm-offset-y-val">${settings.offsetY}</span>px</label>
-                    <input type="range" id="wm-offset-y" min="0" max="100" value="${settings.offsetY}">
-                </div>
-
                 <div class="transform-section transform-actions">
                     <button id="wm-reset" class="reset-btn">Сбросить</button>
                 </div>
@@ -252,10 +245,10 @@ const WatermarkSystem = (function() {
         const opacityVal = panel.querySelector('#wm-opacity-val');
         const rotationSlider = panel.querySelector('#wm-rotation');
         const rotationVal = panel.querySelector('#wm-rotation-val');
-        const offsetXSlider = panel.querySelector('#wm-offset-x');
-        const offsetXVal = panel.querySelector('#wm-offset-x-val');
-        const offsetYSlider = panel.querySelector('#wm-offset-y');
-        const offsetYVal = panel.querySelector('#wm-offset-y-val');
+        const xSlider = panel.querySelector('#wm-x-slider');
+        const xVal = panel.querySelector('#wm-x-val');
+        const ySlider = panel.querySelector('#wm-y-slider');
+        const yVal = panel.querySelector('#wm-y-val');
 
         const updateAndApply = () => {
             const newSettings = {
@@ -264,23 +257,22 @@ const WatermarkSystem = (function() {
                 text: textInput.value,
                 imageSrc: imageUrlInput.value,
                 imageSize: parseInt(imageSizeSlider.value),
-                position: panel.querySelector('.pos-btn.active')?.dataset.pos || 'bottom-right',
+                xPercent: parseInt(xSlider.value),
+                yPercent: parseInt(ySlider.value),
                 fontSize: parseInt(fontSizeSlider.value),
                 color: colorInput.value,
                 fontFamily: fontFamilySelect.value,
                 fontWeight: fontWeightSelect.value,
                 opacity: parseInt(opacitySlider.value),
-                rotation: parseInt(rotationSlider.value),
-                offsetX: parseInt(offsetXSlider.value),
-                offsetY: parseInt(offsetYSlider.value)
+                rotation: parseInt(rotationSlider.value)
             };
 
             fontSizeVal.textContent = newSettings.fontSize;
             imageSizeVal.textContent = newSettings.imageSize;
             opacityVal.textContent = newSettings.opacity;
             rotationVal.textContent = newSettings.rotation;
-            offsetXVal.textContent = newSettings.offsetX;
-            offsetYVal.textContent = newSettings.offsetY;
+            xVal.textContent = newSettings.xPercent;
+            yVal.textContent = newSettings.yPercent;
 
             saveGlobalWatermark(newSettings);
             applyWatermarkToAllSlides(newSettings);
@@ -298,7 +290,7 @@ const WatermarkSystem = (function() {
             el.addEventListener('change', updateAndApply);
         });
 
-        [fontSizeSlider, imageSizeSlider, opacitySlider, rotationSlider, offsetXSlider, offsetYSlider].forEach(el => {
+        [fontSizeSlider, imageSizeSlider, opacitySlider, rotationSlider, xSlider, ySlider].forEach(el => {
             el.addEventListener('input', updateAndApply);
         });
 
@@ -316,14 +308,6 @@ const WatermarkSystem = (function() {
             reader.readAsDataURL(file);
         });
 
-        panel.querySelectorAll('.pos-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                panel.querySelectorAll('.pos-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                updateAndApply();
-            });
-        });
-
         panel.querySelector('#wm-reset').addEventListener('click', () => {
             const def = { ...defaultWatermark };
             enabledCheck.checked = def.enabled;
@@ -337,12 +321,8 @@ const WatermarkSystem = (function() {
             fontWeightSelect.value = def.fontWeight;
             opacitySlider.value = def.opacity;
             rotationSlider.value = def.rotation;
-            offsetXSlider.value = def.offsetX;
-            offsetYSlider.value = def.offsetY;
-
-            panel.querySelectorAll('.pos-btn').forEach(b => {
-                b.classList.toggle('active', b.dataset.pos === def.position);
-            });
+            xSlider.value = def.xPercent;
+            ySlider.value = def.yPercent;
 
             textGroup.style.display = def.useImage ? 'none' : '';
             fontGroup.style.display = def.useImage ? 'none' : '';

@@ -21,7 +21,8 @@
 
     "_3_СТРУКТУРА_СЛАЙДА": {
       "обязательные_поля": ["id", "background", "emoji", "title", "subtitle", "paragraph", "images", "containerSettings", "cta"],
-      "важно": "Все поля обязательны! Если не нужны - ставьте null",
+      "опциональные_поля": ["imagePosition"],
+      "важно": "Все основные поля обязательны! Если не нужны - ставьте null",
       "id": "Номер слайда (1, 2, 3...)",
       "background": "Объект с type/colors/direction",
       "emoji": "Строка с эмодзи или null",
@@ -29,6 +30,7 @@
       "subtitle": "Объект {text} или null",
       "paragraph": "Объект {text} или null",
       "images": "Массив изображений или []",
+      "imagePosition": "Позиция изображений: 'after-title' | 'after-subtitle' | 'after-paragraph' | 'after-all' (default)",
       "containerSettings": "Объект с gap/align/direction/radius",
       "cta": "Объект {text, color} или null"
     },
@@ -162,7 +164,9 @@
       "7. Настройки синхронизируются между форматами 1:1, 4:5, 9:16",
       "8. Для редактирования используйте кнопку 'Редактировать JSON'",
       "9. Можно перетаскивать JSON файлы в область импорта",
-      "10. Экспорт создаёт ZIP со всеми форматами"
+      "10. Экспорт создаёт ZIP со всеми форматами",
+      "11. imagePosition позволяет вставлять картинки между текстовыми элементами",
+      "12. Доступные позиции: after-title, after-subtitle, after-paragraph, after-all (default)"
     ]
   },
 
