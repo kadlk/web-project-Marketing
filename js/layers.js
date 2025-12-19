@@ -289,7 +289,7 @@ function initLayersDragDrop(layersList, elements, activeSlides) {
             // Apply to all slide formats
             activeSlides.forEach(slideEl => {
                 const wrapper = slideEl.querySelector('.slide-content-wrapper') || slideEl;
-                const allElements = Array.from(wrapper.children).filter(el => {
+                let allElements = Array.from(wrapper.children).filter(el => {
                     return !el.classList.contains('slide-number') &&
                            !el.classList.contains('watermark-layer') &&
                            !el.classList.contains('logo') &&
@@ -304,8 +304,16 @@ function initLayersDragDrop(layersList, elements, activeSlides) {
                     const movedElement = allElements[elementIndex];
                     movedElement.parentNode.removeChild(movedElement);
 
+                    // Recalculate allElements after removal
+                    allElements = Array.from(wrapper.children).filter(el => {
+                        return !el.classList.contains('slide-number') &&
+                               !el.classList.contains('watermark-layer') &&
+                               !el.classList.contains('logo') &&
+                               !el.classList.contains('active-slide-label');
+                    });
+
                     // Insert at new position
-                    if (actualIndex >= allElements.length - 1) {
+                    if (actualIndex >= allElements.length) {
                         // Insert at the end
                         wrapper.appendChild(movedElement);
                     } else {
