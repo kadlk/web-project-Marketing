@@ -398,9 +398,9 @@ async function addImageWithControls(container, imageSrc, alt, slideIndex, savedS
     img.src = imageSrc;
     img.alt = alt;
     img.className = 'slide-image';
-    
+
     // Устанавливаем размер
-    const sizeKey = `${slideIndex}_${imageSrc.substring(0, 50)}`;
+    const sizeKey = `${slideIndex}_${String(imageSrc || '').substring(0, 50)}`;
     let finalSize = savedSize;
     
     // Если размер не задан, вычисляем оптимальный

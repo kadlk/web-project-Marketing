@@ -51,9 +51,31 @@ function createSlideFromJSON(slideData, slideIndex, totalSlides, logo, watermark
         const projectId = projectsData.find(p => p.logo === logo)?.id || currentProjectId;
         if (projectId && logoSettings[projectId]) {
             const settings = logoSettings[projectId];
-            if (settings.height) logoImg.style.height = settings.height + 'px';
-            if (settings.top !== undefined) logoImg.style.top = settings.top + 'px';
-            if (settings.left !== undefined) logoImg.style.left = settings.left + 'px';
+            const slideHeight = slide.offsetHeight;
+            const slideWidth = slide.offsetWidth;
+
+            // Процентная система (новое)
+            if (settings.heightPercent !== undefined) {
+                logoImg.style.height = (slideHeight * settings.heightPercent / 100) + 'px';
+            }
+            if (settings.topPercent !== undefined) {
+                logoImg.style.top = (slideHeight * settings.topPercent / 100) + 'px';
+            }
+            if (settings.leftPercent !== undefined) {
+                logoImg.style.left = (slideWidth * settings.leftPercent / 100) + 'px';
+            }
+
+            // Обратная совместимость со старой системой в пикселях
+            if (settings.heightPercent === undefined && settings.height) {
+                logoImg.style.height = settings.height + 'px';
+            }
+            if (settings.topPercent === undefined && settings.top !== undefined) {
+                logoImg.style.top = settings.top + 'px';
+            }
+            if (settings.leftPercent === undefined && settings.left !== undefined) {
+                logoImg.style.left = settings.left + 'px';
+            }
+
             if (settings.opacity !== undefined) logoImg.style.opacity = settings.opacity;
             if (settings.shadow) logoImg.style.filter = `drop-shadow(${settings.shadow})`;
             if (settings.border && settings.borderWidth > 0) {
@@ -319,7 +341,11 @@ function createSlideFromJSON(slideData, slideIndex, totalSlides, logo, watermark
         };
 
         slideData.images.forEach(imgData => {
-            addImageWithControls(container, imgData.src, imgData.alt || '', slideIndex, imgData.size || null);
+            // Support both 'src' (new) and 'url' (old) formats
+            const imageSrc = imgData.src || imgData.url;
+            if (imageSrc && typeof imageSrc === 'string') {
+                addImageWithControls(container, imageSrc, imgData.alt || '', slideIndex, imgData.size || null);
+            }
         });
 
         // Применяем borderRadius к изображениям

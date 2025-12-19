@@ -1642,19 +1642,19 @@ function createLogoSettingsPanel() {
         </div>
         <div class="size-panel-content">
             <div style="margin-bottom: 15px;">
-                <label>Размер (высота): <span id="logo-height-value">60</span>px</label>
-                <input type="range" id="logo-height-slider" min="20" max="200" value="60" style="width: 100%; margin: 10px 0;">
-                <input type="number" id="logo-height-input" min="20" max="200" value="60" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                <label>Размер (высота): <span id="logo-height-value">12</span>%</label>
+                <input type="range" id="logo-height-slider" min="5" max="30" value="12" style="width: 100%; margin: 10px 0;">
+                <input type="number" id="logo-height-input" min="5" max="30" value="12" style="width: 100%; padding: 8px; margin-bottom: 10px;">
             </div>
             <div style="margin-bottom: 15px;">
-                <label>Позиция сверху: <span id="logo-top-value">40</span>px</label>
-                <input type="range" id="logo-top-slider" min="0" max="200" value="40" style="width: 100%; margin: 10px 0;">
-                <input type="number" id="logo-top-input" min="0" max="200" value="40" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                <label>Позиция сверху: <span id="logo-top-value">8</span>%</label>
+                <input type="range" id="logo-top-slider" min="0" max="50" value="8" style="width: 100%; margin: 10px 0;">
+                <input type="number" id="logo-top-input" min="0" max="50" value="8" style="width: 100%; padding: 8px; margin-bottom: 10px;">
             </div>
             <div style="margin-bottom: 15px;">
-                <label>Позиция слева: <span id="logo-left-value">40</span>px</label>
-                <input type="range" id="logo-left-slider" min="0" max="500" value="40" style="width: 100%; margin: 10px 0;">
-                <input type="number" id="logo-left-input" min="0" max="500" value="40" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                <label>Позиция слева: <span id="logo-left-value">8</span>%</label>
+                <input type="range" id="logo-left-slider" min="0" max="50" value="8" style="width: 100%; margin: 10px 0;">
+                <input type="number" id="logo-left-input" min="0" max="50" value="8" style="width: 100%; padding: 8px; margin-bottom: 10px;">
             </div>
             <div style="margin-bottom: 15px;">
                 <label>Прозрачность: <span id="logo-opacity-value">100</span>%</label>
@@ -1746,12 +1746,13 @@ function createLogoSettingsPanel() {
 
     const applyLogoSettings = () => {
         if (!currentProjectId) return;
-        
-        const height = parseInt(heightInput.value) || 60;
-        const top = parseInt(topInput.value) || 40;
-        const left = parseInt(leftInput.value) || 40;
+
+        // Новая система: проценты
+        const heightPercent = parseInt(heightInput.value) || 12;
+        const topPercent = parseInt(topInput.value) || 8;
+        const leftPercent = parseInt(leftInput.value) || 8;
         const opacity = (parseInt(opacityInput.value) || 100) / 100;
-        
+
         const shadowXVal = parseInt(shadowX.value) || 0;
         const shadowYVal = parseInt(shadowY.value) || 2;
         const shadowBlurVal = parseInt(shadowBlur.value) || 8;
@@ -1759,22 +1760,26 @@ function createLogoSettingsPanel() {
         const shadowOpacityVal = (parseInt(shadowOpacity.value) || 50) / 100;
         const shadowRgb = hexToRgb(shadowColorVal);
         const shadow = `${shadowXVal}px ${shadowYVal}px ${shadowBlurVal}px rgba(${shadowRgb.r}, ${shadowRgb.g}, ${shadowRgb.b}, ${shadowOpacityVal})`;
-        
+
         const borderWidthVal = parseInt(borderWidth.value) || 0;
         const borderColorVal = borderColor.value || '#ffffff';
         const borderRadiusVal = parseInt(borderRadius.value) || 0;
-        
+
         // Применяем настройки ко всем логотипам проекта
         const allSlides = document.querySelectorAll('.slide');
         allSlides.forEach(slide => {
             const logoImg = slide.querySelector('.logo');
             if (logoImg) {
-                logoImg.style.height = height + 'px';
-                logoImg.style.top = top + 'px';
-                logoImg.style.left = left + 'px';
+                const slideHeight = slide.offsetHeight;
+                const slideWidth = slide.offsetWidth;
+
+                // Применяем процентные значения
+                logoImg.style.height = (slideHeight * heightPercent / 100) + 'px';
+                logoImg.style.top = (slideHeight * topPercent / 100) + 'px';
+                logoImg.style.left = (slideWidth * leftPercent / 100) + 'px';
                 logoImg.style.opacity = opacity;
                 logoImg.style.filter = `drop-shadow(${shadow})`;
-                
+
                 if (borderWidthVal > 0) {
                     logoImg.style.border = `${borderWidthVal}px solid ${borderColorVal}`;
                     logoImg.style.borderRadius = borderRadiusVal + 'px';
@@ -1784,12 +1789,12 @@ function createLogoSettingsPanel() {
                 }
             }
         });
-        
-        // Сохраняем настройки
+
+        // Сохраняем настройки (новая структура с процентами)
         logoSettings[currentProjectId] = {
-            height: height,
-            top: top,
-            left: left,
+            heightPercent: heightPercent,
+            topPercent: topPercent,
+            leftPercent: leftPercent,
             opacity: opacity,
             shadow: shadow,
             border: borderWidthVal > 0,
@@ -1850,11 +1855,12 @@ function createLogoSettingsPanel() {
         // Let's set the global if needed? NO, avoid side effects.
         
         logoStateSaved = false;
-        
+
         if (settings) {
-            updateHeightValue(settings.height || 60);
-            updateTopValue(settings.top !== undefined ? settings.top : 40);
-            updateLeftValue(settings.left !== undefined ? settings.left : 40);
+            // Поддержка новой структуры с процентами
+            updateHeightValue(settings.heightPercent || settings.height || 12);
+            updateTopValue(settings.topPercent !== undefined ? settings.topPercent : (settings.top !== undefined ? settings.top : 8));
+            updateLeftValue(settings.leftPercent !== undefined ? settings.leftPercent : (settings.left !== undefined ? settings.left : 8));
             updateOpacityValue((settings.opacity || 1) * 100);
             
             if (settings.shadow) {
