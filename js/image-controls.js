@@ -34,7 +34,8 @@ const ImageControlSystem = (function() {
     function applyTransformToImage(img, settings) {
         if (!img) return;
 
-        const wrapper = img.closest('.uploaded-image-wrapper');
+        // Поддерживаем оба типа обёрток: flex и free positioning
+        const wrapper = img.closest('.uploaded-image-wrapper') || img.closest('.free-positioned-image');
         if (!wrapper) return;
 
         let transform = '';
@@ -351,12 +352,13 @@ const ImageControlSystem = (function() {
         saveStateForUndo();
 
         const sizeKey = img.dataset.sizeKey;
-        const wrapper = img.closest('.uploaded-image-wrapper');
+        const wrapper = img.closest('.uploaded-image-wrapper') || img.closest('.free-positioned-image');
 
         document.querySelectorAll('.slide').forEach(slide => {
-            const relatedImg = slide.querySelector(`img[data-size-key="${sizeKey}"]`);
-            if (relatedImg) {
-                relatedImg.closest('.uploaded-image-wrapper')?.remove();
+            // Используем вспомогательную функцию которая ищет в обоих слоях
+            const relatedWrapper = findImageWrapperBySizeKey(slide, sizeKey);
+            if (relatedWrapper) {
+                relatedWrapper.remove();
             }
         });
 

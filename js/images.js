@@ -2,8 +2,8 @@
 function updateImagePreview(preview, slideIndex, slideElement, additionalSlides) {
     preview.innerHTML = '';
     
-    // Получаем все изображения со слайда
-    const allImages = slideElement.querySelectorAll('.slide-image-container img, .uploaded-image-wrapper img');
+    // Получаем все изображения со слайда (включая свободное позиционирование)
+    const allImages = slideElement.querySelectorAll('.slide-image-container img, .uploaded-image-wrapper img, .free-positioning-layer img');
     const imageList = document.createElement('div');
     imageList.className = 'image-list';
     imageList.style.display = 'flex';
@@ -396,9 +396,10 @@ function addImageToSlide(slideElement, imageSrc, slideIndex, replaceExisting = f
         // Удаляем из всех связанных слайдов (все форматы)
         const allSlides = document.querySelectorAll('.slide');
         allSlides.forEach(slide => {
-            const wrapper = slide.querySelector(`.uploaded-image-wrapper img[data-size-key="${sizeKey}"]`);
+            // Используем вспомогательную функцию которая ищет в обоих слоях
+            const wrapper = findImageWrapperBySizeKey(slide, sizeKey);
             if (wrapper) {
-                wrapper.closest('.uploaded-image-wrapper').remove();
+                wrapper.remove();
             }
         });
         // Удаляем размер из хранилища
@@ -525,9 +526,10 @@ async function addImageWithControls(container, imageSrc, alt, slideIndex, savedS
         // Удаляем из всех связанных слайдов (все форматы)
         const allSlides = document.querySelectorAll('.slide');
         allSlides.forEach(slide => {
-            const wrapper = slide.querySelector(`.uploaded-image-wrapper img[data-size-key="${sizeKey}"]`);
+            // Используем вспомогательную функцию которая ищет в обоих слоях
+            const wrapper = findImageWrapperBySizeKey(slide, sizeKey);
             if (wrapper) {
-                wrapper.closest('.uploaded-image-wrapper').remove();
+                wrapper.remove();
             }
         });
         // Удаляем размер из хранилища

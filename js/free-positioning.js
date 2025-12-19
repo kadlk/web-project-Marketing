@@ -523,6 +523,29 @@ function loadImagePositions() {
     }
 }
 
+// Вспомогательная функция для поиска обёртки с изображением
+// Ищет как в flex контейнере, так и в слое свободного позиционирования
+function findImageWrapperBySizeKey(slide, sizeKey) {
+    if (!slide || !sizeKey) return null;
+
+    // Сначала ищем в слое свободного позиционирования
+    const freeLayer = slide.querySelector('.free-positioning-layer');
+    if (freeLayer) {
+        const freeImage = freeLayer.querySelector(`img[data-size-key="${sizeKey}"]`);
+        if (freeImage) {
+            return freeImage.closest('.free-positioned-image');
+        }
+    }
+
+    // Если не найдено в свободном слое, ищем в flex контейнере
+    const flexImage = slide.querySelector(`.uploaded-image-wrapper img[data-size-key="${sizeKey}"]`);
+    if (flexImage) {
+        return flexImage.closest('.uploaded-image-wrapper');
+    }
+
+    return null;
+}
+
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
     loadImagePositions();
