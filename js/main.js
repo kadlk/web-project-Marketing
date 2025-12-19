@@ -81,35 +81,36 @@ function applyFontScale(percent) {
     // Set CSS variable for font scale
     root.style.setProperty('--font-scale', scale);
 
+    // Base sizes for 1:1 format (reference point)
+    const BASE_HEADING_SIZE = 38;
+    const BASE_SUBTITLE_SIZE = 16;
+    const BASE_EMOJI_SIZE = 80;
+
     // Apply scale to all text elements across all slides
     const slides = document.querySelectorAll('.slide');
     slides.forEach(slide => {
-        // Scale headings
+        // Scale headings - calculate from 1:1 base size
         const headings = slide.querySelectorAll('h1, h2');
         headings.forEach(h => {
-            const baseSize = h.classList.contains('format-9-16') ? 26 :
-                           h.classList.contains('format-4-5') ? 32 : 38;
-            h.style.fontSize = (baseSize * scale) + 'px';
+            // Start from 1:1 base and apply scale
+            const scaledSize = BASE_HEADING_SIZE * scale;
+            h.style.fontSize = scaledSize + 'px';
         });
 
-        // Scale subtitle and paragraphs
+        // Scale subtitle and paragraphs - calculate from 1:1 base size
         const textElements = slide.querySelectorAll('.subtitle, p');
         textElements.forEach(el => {
-            let baseSize = 16;
-            if (el.closest('.format-9-16')) baseSize = 13;
-            else if (el.closest('.format-4-5')) baseSize = 15;
-
-            el.style.fontSize = (baseSize * scale) + 'px';
+            // Start from 1:1 base and apply scale
+            const scaledSize = BASE_SUBTITLE_SIZE * scale;
+            el.style.fontSize = scaledSize + 'px';
         });
 
-        // Scale emoji
+        // Scale emoji - calculate from 1:1 base size
         const emojis = slide.querySelectorAll('.emoji');
         emojis.forEach(emoji => {
-            let baseSize = 80;
-            if (emoji.closest('.format-9-16')) baseSize = 36;
-            else if (emoji.closest('.format-4-5')) baseSize = 50;
-
-            emoji.style.fontSize = (baseSize * scale) + 'px';
+            // Start from 1:1 base and apply scale
+            const scaledSize = BASE_EMOJI_SIZE * scale;
+            emoji.style.fontSize = scaledSize + 'px';
         });
     });
 }
