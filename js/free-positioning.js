@@ -396,6 +396,10 @@ function toggleFreePositioningMode(slideIndex, enable) {
                 container.style.width = '100%';
                 container.style.zIndex = '100';
                 container.style.pointerEvents = 'auto';
+                container.style.overflow = 'visible';
+                container.style.flexWrap = 'nowrap';
+                // Container overlays the entire slide to allow free positioning
+                // Images can move freely without being constrained
             }
 
             // Центрируем группу изображений как единое целое
