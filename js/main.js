@@ -1180,13 +1180,15 @@ function initExport() {
                 
                 // Рендер
                 const canvas = await html2canvas(node, {
-                    scale: 2, // High quality
+                    scale: 3, // Maximum quality (3x resolution)
                     useCORS: true,
                     backgroundColor: null, // Transparent if needed, but slides have background
-                    logging: false
+                    logging: false,
+                    allowTaint: false,
+                    removeContainer: true
                 });
-                
-                const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.9));
+
+                const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 1.0));
                 formatFolder.file(filename, blob);
             }
         }
