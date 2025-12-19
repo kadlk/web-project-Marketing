@@ -76,12 +76,6 @@ function setupInteractJS(imageWrapper, slideIndex, sizeKey) {
     interact(imageWrapper)
         .draggable({
             inertia: false,
-            modifiers: [
-                interact.modifiers.restrict({
-                    restriction: 'parent',
-                    endOnly: false
-                })
-            ],
             listeners: {
                 start(event) {
                     imageWrapper.style.opacity = '0.8';
